@@ -1,4 +1,5 @@
-var level1 = MazeSets.HackerLevels[0];
+var level1 = MazeSets.StandardLevels[0];
+var PacmanInd = []
 var t = 0;
 var left = 0;
 level1.maze.forEach(row => {
@@ -7,6 +8,10 @@ level1.maze.forEach(row => {
         var img = document.createElement('img')
         if (element == '.')
             element = 'food'
+        else if (element == 'P') {
+            element = 'x'
+            PacmanInd = [t, left]
+        }
         img.src = 'resources/' + element + '.png'
         img.setAttribute('style',
             `height:27px;
@@ -14,7 +19,7 @@ level1.maze.forEach(row => {
             top:${t}px;
             left:${left}px;
             padding:0px;
-            postion:absolute;
+            position:absolute;
             z-index:1`)
         document.getElementById('pacmanMaze').append(img)
         left += 27;
@@ -22,3 +27,17 @@ level1.maze.forEach(row => {
     left = 0;
     t += 27;
 });
+
+var img = document.createElement('img')
+img.src = 'resources/' + 'Right/pac1' + '.png'
+img.id="pacman"
+img.setAttribute('style',
+    `height:27px;
+            width:27px;
+            padding:0px;
+            position:absolute;
+            z-index:2`)
+            
+
+document.getElementById('pacmanOverlay').style.top= (PacmanInd[0]).toString()+'px';
+document.getElementById('pacmanOverlay').style.left=(PacmanInd[1]).toString()+'px';
