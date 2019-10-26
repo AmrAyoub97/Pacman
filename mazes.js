@@ -6,7 +6,7 @@ var MazeSets = {
 			backdrop: "mazebg",
 			maze: [
 				"ahhhhhgxbhhdxehhhhhc",
-				"vp....o......o....pv",
+				"v.....o......o.....v",
 				"v.lhm...lhhm...lhm.v",
 				"v.....n......n.....v",
 				"v.n.n.v.ahhc.v.n.n.v",
@@ -17,7 +17,7 @@ var MazeSets = {
 				"em.lc.am.lm.lc.am.lg",
 				"v...v.v......v.v...v",
 				"v.k.o.o.lhhm.o.o.k.v",
-				"vp................pv",
+				"v..................v",
 				"bhhhhhcxahhcxahhhhhd"
 			]
 		},
