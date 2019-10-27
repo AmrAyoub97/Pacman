@@ -73,6 +73,7 @@ document.addEventListener('keydown', function (e) {
 
 })
 function stopPacman() {
+    nxtDir = 0
     window.clearInterval(myInt);
 }
 function ChangeDirction(cur, next) {

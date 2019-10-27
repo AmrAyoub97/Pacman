@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        @font-face {
+            font-family: 'ArcadeFont';
+            /*a name to be used later*/
+            src: url('./font/ARCADE_N.TTF');
+            /*URL to font*/
+        }
+
+        @font-face {
+            font-family: 'ArcadeFont2';
+            /*a name to be used later*/
+            src: url('./font/ARCADE_R.TTF');
+            /*URL to font*/
+        }
+
+        #home {
+            position: relative;
+            background-image: url(resources/home.jpg);
+            background-repeat: no-repeat;
+            width: 1008px;
+            height: 604px;
+            text-align: center;
+            position: relative;
+            margin: 0 auto;
+            display: block;
+            font-size: 0
+        }
+
+        #homeMenu {
+            position: absolute;
+            width: 100%;
+            display: block;
+            text-align: center;
+            top: 300px;
+        }
+
+        p {
+            font-size: 25px;
+            color: white;
+        }
+
+        p:nth-child(1) {
+            color: yellow;
+        }
+    </style>
+
+</head>
+
+<body style="background-color: black">
+
+    <div id='home'>
+        <div id="homeMenu">
+            <p id="mNewgame" style="font-family: ArcadeFont;">
+                New Game
+            </p>
+            <p id="mHelp" style="font-family: ArcadeFont;">
+                Help
+            </p>
+            <p id="mExit" style="font-family: ArcadeFont;">
+                Exit
+            </p>
+        </div>
+    </div>
+
+
+    <script src="Home.js"></script>
+</body>
+
+</html>

@@ -18,7 +18,6 @@ for (var i = 0; i < mze.length; i++) {
         img.setAttribute('style',
             `height:27px;
             width:27px;
-            border:1px solid green;
             top:${t}px;
             left:${left}px;
             padding:0px;
