@@ -1,6 +1,595 @@
-SetupMaze(0)
-var maze = GenMaze()
+var Currentlevel = 0;
+var NumofFood = SetupUi(Currentlevel);
 var pacman = document.getElementById('pacmanOverlay');
+var CurrentFace;
+var myInt;
+var x = parseInt(pacman.style.left);
+var y = parseInt(pacman.style.top);
+var delay = 35;
+var maze;
+var Inprogressflag = false;
+var contstate;
+var audio = new Audio('resources/waka.mp3');
+maze = GenMaze(Currentlevel);
+var Nrow = maze.length;
+var Ncol = maze[0].length;
+
+
+function checkbroder(Currentx, Currenty, CurrentFace) {
+    var Xrow = Currentx;
+    var Ycol = Currenty;
+
+    if (Currentx == 0 && CurrentFace == 'MoveUp') {
+        return true;
+    }
+    else if (Currentx == Nrow - 1 && CurrentFace == 'MoveDown') {
+        return true;
+    }
+    else if (Currenty == 0 && CurrentFace == 'MoveLeft') {
+        return true;
+    }
+    else if (Currenty == Ncol - 1 && CurrentFace == 'MoveRight') {
+        return true;
+    }
+
+    else if (CurrentFace == 'MoveLeft' && !(maze[Xrow][Ycol - 1] == 'x' || maze[Xrow][Ycol - 1] == '.')) { return true; }
+
+    else if (CurrentFace == 'MoveRight' && !(maze[Xrow][Ycol + 1] == 'x' || maze[Xrow][Ycol + 1] == '.')) { return true; }
+
+    if (CurrentFace == 'MoveUp' && !(maze[Xrow - 1][Ycol] == 'x' || maze[Xrow - 1][Ycol] == '.')) { return true; }
+
+    else if (CurrentFace == 'MoveDown' && !(maze[Xrow + 1][Ycol] == 'x' || maze[Xrow + 1][Ycol] == '.')) { return true; }
+
+    return false;
+}
+
+function CheckWall(DesireState) {
+
+    if ((DesireState == 'MoveUp' || DesireState == 'MoveDown') && CurrentFace == 'MoveLeft') {
+        var tempx = x;
+        var tempy = y;
+
+        if (x % 27 < 21) {
+            tempx = x - (x % 27)
+        }
+        else {
+            tempx = x + (27 - (x % 27))
+        }
+
+        if (DesireState == 'MoveUp' && (maze[(tempy / 27) - 1][tempx / 27] == '.' || maze[(tempy / 27) - 1][tempx / 27] == 'x'))
+            return false;
+
+        else if (DesireState == 'MoveDown' && (maze[(tempy / 27) + 1][tempx / 27] == '.' || maze[(tempy / 27) + 1][tempx / 27] == 'x'))
+            return false;
+
+        return true;
+    }
+    else if ((DesireState == 'MoveUp' || DesireState == 'MoveDown') && CurrentFace == 'MoveRight') {
+        var tempx = x;
+        var tempy = y;
+        if (x % 27 > 6) {
+            tempx = x + (27 - (x % 27))
+        }
+        else {
+            tempx = x - (x % 27)
+        }
+        if (DesireState == 'MoveUp' && (maze[(tempy / 27) - 1][tempx / 27] == '.' || maze[(tempy / 27) - 1][tempx / 27] == 'x'))
+            return false;
+
+        if (DesireState == 'MoveDown' && (maze[(tempy / 27) + 1][tempx / 27] == '.' || maze[(tempy / 27) + 1][tempx / 27] == 'x'))
+            return false;
+
+        return true;
+    }
+    else if ((DesireState == 'MoveRight' || DesireState == 'MoveLeft') && CurrentFace == 'MoveUp') {
+        var tempx = x;
+        var tempy = y;
+
+        if (y % 27 < 21) {
+            tempy = y - (y % 27);
+        }
+        else {
+            tempy = y + (27 - y % 27);
+        }
+        if (DesireState == 'MoveRight' && (maze[tempy / 27][(tempx / 27) + 1] == '.' || maze[tempy / 27][(tempx / 27) + 1] == 'x'))
+            return false;
+        if (DesireState == 'MoveLeft' && (maze[tempy / 27][(tempx / 27) - 1] == '.' || maze[tempy / 27][(tempx / 27) - 1] == 'x'))
+            return false;
+
+        return true;
+    }
+
+    else if ((DesireState == 'MoveRight' || DesireState == 'MoveLeft') && CurrentFace == 'MoveDown') {
+        var tempx = x;
+        var tempy = y;
+        if (y % 27 > 6) {
+            tempy = y + (27 - y % 27);
+        }
+        else {
+            tempy = y - (y % 27);
+        }
+        if (DesireState == 'MoveRight' && (maze[tempy / 27][(tempx / 27) + 1] == '.' || maze[tempy / 27][(tempx / 27) + 1] == 'x'))
+            return false;
+        if (DesireState == 'MoveLeft' && (maze[tempy / 27][(tempx / 27) - 1] == '.' || maze[tempy / 27][(tempx / 27) - 1] == 'x'))
+            return false;
+
+        return true;
+    }
+}
+
+function SetPixel(DesireState) {
+    if ((DesireState == 'MoveUp' || DesireState == 'MoveDown') && CurrentFace == 'MoveLeft') {
+        if (myInt != null) {
+            window.clearInterval(myInt);
+        }
+        if (contstate != null) {
+            window.clearInterval(contstate);
+        }
+
+        if (x % 27 < 21) {
+            contstate = setInterval(function () {
+                if (x % 27 == 0) {
+                    window.clearInterval(contstate);
+                }
+                else {
+                    x -= 3;
+                    pacman.style.left = (x).toString() + 'px';
+                }
+            }, delay);
+        }
+        else {
+            contstate = setInterval(function () {
+                if (x % 27 == 0) {
+                    window.clearInterval(contstate);
+                }
+                else {
+                    x += 3;
+                    pacman.style.left = (x).toString() + 'px';
+                }
+            }, delay);
+        }
+    }
+
+    else if ((DesireState == 'MoveUp' || DesireState == 'MoveDown') && CurrentFace == 'MoveRight') {
+        if (myInt != null) {
+            window.clearInterval(myInt);
+        }
+        if (contstate != null) {
+            window.clearInterval(contstate);
+        }
+
+        if (x % 27 > 6) {
+            contstate = setInterval(function () {
+                if (x % 27 == 0) {
+                    window.clearInterval(contstate);
+                }
+                else {
+                    x += 3;
+                    pacman.style.left = (x).toString() + 'px';
+                }
+
+            }, delay);
+        }
+        else {
+            contstate = setInterval(function () {
+                if (x % 27 == 0) {
+
+                    window.clearInterval(contstate);
+                }
+                else {
+                    x -= 3;
+                    pacman.style.left = (x).toString() + 'px';
+                }
+            }, delay);
+        }
+    }
+
+    else if ((DesireState == 'MoveRight' || DesireState == 'MoveLeft') && CurrentFace == 'MoveUp') {
+        if (myInt != null) {
+            window.clearInterval(myInt);
+        }
+        if (contstate != null) {
+            window.clearInterval(contstate);
+        }
+        if (y % 27 < 21) {
+            contstate = setInterval(function () {
+                if (y % 27 == 0) {
+                    window.clearInterval(contstate);
+                }
+                else {
+                    y -= 3;
+                    pacman.style.top = (y).toString() + 'px';
+                }
+            }, delay - 30);
+        }
+        else {
+
+            contstate = setInterval(function () {
+                if (y % 27 == 0) {
+                    window.clearInterval(contstate);
+                }
+                else {
+                    y += 3;
+                    pacman.style.top = (y).toString() + 'px';
+                }
+            }, delay - 30);
+
+        }
+
+    }
+    else if ((DesireState == 'MoveRight' || DesireState == 'MoveLeft') && CurrentFace == 'MoveDown') {
+        if (myInt != null) {
+            window.clearInterval(myInt);
+        }
+        if (contstate != null) {
+            window.clearInterval(contstate);
+        }
+        if (y % 27 > 6) {
+            contstate = setInterval(function () {
+                if (y % 27 == 0) {
+                    window.clearInterval(contstate);
+                }
+                else {
+                    y += 3;
+                    pacman.style.top = (y).toString() + 'px';
+                }
+            }, delay - 30);
+        }
+
+        else {
+
+            contstate = setInterval(function () {
+                if (y % 27 == 0) {
+                    window.clearInterval(contstate);
+                }
+                else {
+                    y -= 3;
+                    pacman.style.top = (y).toString() + 'px';
+                }
+            }, delay - 30);
+
+        }
+    }
+}
+
+var MoveLeft = function () {
+
+    if (CurrentFace != null) {
+        pacman.classList.remove(CurrentFace);
+    }
+
+    pacman.classList.add('MoveLeft');
+    CurrentFace = 'MoveLeft';
+
+    if (myInt != null) {
+        window.clearInterval(myInt);
+    }
+    myInt = setInterval(function () {
+
+        var row = y / 27;
+        var col = x / 27;
+
+        if (y % 27 == 0 && x % 27 == 0 && maze[row][col] == '.') {
+            document.getElementById((y).toString() + (x).toString()).src = 'resources/' + 'x' + '.png';
+            NumofFood -= 1;
+            maze[row][col] = 'x';
+
+            if (audio.duration > 0)
+                audio.play();
+            if (NumofFood == 0) {
+                window.clearInterval(myInt);
+                document.getElementById('Winner').setAttribute('style',
+                    'display: block');
+                setTimeout(function () {
+
+
+                }, 1000);
+                setTimeout(function () {
+
+                    document.getElementById('Winner').setAttribute('style', 'display: none');
+
+                    NumofFood = UpdateUi(Currentlevel + 1);
+                    maze = GenMaze(Currentlevel + 1);
+                    Currentlevel += 1;
+                    x = parseInt(pacman.style.left);
+                    y = parseInt(pacman.style.top);
+                    var Nrow = maze.length;
+                    var Ncol = maze[0].length;
+
+                    pacman.classList.remove(CurrentFace);
+                    document.getElementById('pacmanOverlay').style.backgroundImage = 'resources/Right/pac1.png';
+
+
+                }, 2000);
+            }
+
+        }
+
+        if (x % 27 == 0 && checkbroder(row, col, CurrentFace)) {
+            window.clearInterval(myInt);
+        }
+
+        else {
+            x -= 3;
+            pacman.style.left = (x).toString() + 'px';
+        }
+
+
+    }, delay);
+}
+var MoveRight = function () {
+
+    if (CurrentFace != -1) {
+        pacman.classList.remove(CurrentFace);
+    }
+    pacman.classList.add('MoveRight');
+    CurrentFace = 'MoveRight';
+
+    if (myInt != null) {
+        window.clearInterval(myInt);
+    }
+    myInt = setInterval(function () {
+
+        var row = y / 27;
+        var col = x / 27;
+
+        if (y % 27 == 0 && x % 27 == 0 && maze[row][col] == '.') {
+            document.getElementById((y).toString() + (x).toString()).src = 'resources/' + 'x' + '.png';
+            maze[row][col] = 'x';
+            NumofFood -= 1;
+
+            if (audio.duration > 0)
+                audio.play();
+
+            if (NumofFood == 0) {
+                window.clearInterval(myInt);
+                document.getElementById('Winner').setAttribute('style',
+                    'display: block');
+                setTimeout(function () {
+
+
+                }, 1000);
+                setTimeout(function () {
+
+                    document.getElementById('Winner').setAttribute('style', 'display: none');
+
+                    NumofFood = UpdateUi(Currentlevel + 1);
+                    maze = GenMaze(Currentlevel + 1);
+                    Currentlevel += 1;
+                    x = parseInt(pacman.style.left);
+                    y = parseInt(pacman.style.top);
+                    var Nrow = maze.length;
+                    var Ncol = maze[0].length;
+
+                    pacman.classList.remove(CurrentFace);
+                    document.getElementById('pacmanOverlay').style.backgroundImage = 'resources/Right/pac1.png';
+
+
+                }, 2000);
+            }
+
+        }
+
+        if (x % 27 == 0) {
+
+            if (y % 27 == 0 && checkbroder(row, col, CurrentFace))
+                window.clearInterval(myInt);
+
+
+
+            else {
+                x += 3;
+                pacman.style.left = (x).toString() + 'px';
+            }
+
+        }
+
+        else {
+            x += 3;
+            pacman.style.left = (x).toString() + 'px';
+        }
+
+
+
+    }, delay);
+
+}
+
+var MoveUp = function () {
+
+    if (CurrentFace != null) {
+        pacman.classList.remove(CurrentFace);
+    }
+
+    pacman.classList.add('MoveUp');
+    CurrentFace = 'MoveUp';
+
+    if (myInt != null) {
+        window.clearInterval(myInt);
+    }
+
+
+    myInt = setInterval(function () {
+
+        var row = y / 27;
+        var col = x / 27;
+        if (y % 27 == 0 && x % 27 == 0 && maze[row][col] == '.') {
+            document.getElementById((y).toString() + (x).toString()).src = 'resources/' + 'x' + '.png';
+            NumofFood -= 1;
+            if (audio.duration > 0)
+                audio.play();
+            maze[row][col] = 'x';
+            if (NumofFood == 0) {
+                window.clearInterval(myInt);
+                document.getElementById('Winner').setAttribute('style',
+                    'display: block');
+                setTimeout(function () {
+
+
+                }, 1000);
+                setTimeout(function () {
+
+                    document.getElementById('Winner').setAttribute('style', 'display: none');
+
+                    NumofFood = UpdateUi(Currentlevel + 1);
+                    maze = GenMaze(Currentlevel + 1);
+                    Currentlevel += 1;
+                    x = parseInt(pacman.style.left);
+                    y = parseInt(pacman.style.top);
+                    var Nrow = maze.length;
+                    var Ncol = maze[0].length;
+
+                    pacman.classList.remove(CurrentFace);
+                    document.getElementById('pacmanOverlay').style.backgroundImage = 'resources/Right/pac1.png';
+
+
+                }, 2000);
+
+
+            }
+
+        }
+
+        if (y % 27 == 0) {
+
+            if (x % 27 == 0 && checkbroder(row, Math.ceil(col), CurrentFace))
+                window.clearInterval(myInt);
+
+            else {
+                y -= 3;
+                pacman.style.top = (y).toString() + 'px';
+            }
+        }
+
+        else {
+            y -= 3;
+            pacman.style.top = (y).toString() + 'px';
+        }
+
+
+
+    }, delay);
+
+
+}
+var MoveDown = function () {
+    if (CurrentFace != null) {
+        pacman.classList.remove(CurrentFace);
+    }
+
+    pacman.classList.add('MoveDown');
+    CurrentFace = 'MoveDown';
+    if (myInt != null) {
+        window.clearInterval(myInt);
+    }
+    myInt = setInterval(function () {
+        var row = y / 27;
+        var col = x / 27;
+
+        if (y % 27 == 0 && x % 27 == 0 && maze[row][col] == '.') {
+            if (audio.duration > 0)
+                audio.play();
+
+            document.getElementById((y).toString() + (x).toString()).src = 'resources/' + 'x' + '.png';
+            NumofFood -= 1;
+            maze[row][col] = 'x';
+            if (NumofFood == 0) {
+                window.clearInterval(myInt);
+                document.getElementById('Winner').setAttribute('style',
+                    'display: block');
+                setTimeout(function () {
+
+
+                }, 1000);
+                setTimeout(function () {
+
+                    document.getElementById('Winner').setAttribute('style', 'display: none');
+
+                    NumofFood = UpdateUi(Currentlevel + 1);
+                    maze = GenMaze(Currentlevel + 1);
+                    Currentlevel += 1;
+                    x = parseInt(pacman.style.left);
+                    y = parseInt(pacman.style.top);
+                    var Nrow = maze.length;
+                    var Ncol = maze[0].length;
+
+                    pacman.classList.remove(CurrentFace);
+                    document.getElementById('pacmanOverlay').style.backgroundImage = 'resources/Right/pac1.png';
+
+
+                }, 2000);
+
+
+            }
+        }
+
+        if (y % 27 == 0) {
+            if (x % 27 == 0 && checkbroder(row, col, CurrentFace))
+                window.clearInterval(myInt);
+
+            else {
+                y += 3;
+                pacman.style.top = (y).toString() + 'px';
+            }
+
+        }
+
+        else {
+            y += 3;
+            pacman.style.top = (y).toString() + 'px';
+        }
+
+
+    }, delay);
+}
+
+document.addEventListener('keydown', function (e) {
+
+    //console.log(e.keyCode);
+
+    // if (e.keyCode == 80){//game paused
+    //     window.clearInterval(myInt);
+    // }
+    // else 
+
+    if (e.keyCode == 37) // left
+    {
+        if (!CheckWall('MoveLeft')) {
+            SetPixel('MoveLeft');
+            MoveLeft();
+        }
+    }
+    else if (e.keyCode == 38) // up
+    {
+
+        if (!CheckWall('MoveUp')) {
+            SetPixel('MoveUp');
+            MoveUp();
+        }
+    }
+    else if (e.keyCode == 39) //right
+    {
+
+        if (!CheckWall('MoveRight')) {
+            SetPixel('MoveRight');
+            MoveRight();
+        }
+    }
+    else if (e.keyCode == 40) //down
+    {
+        if (!CheckWall('MoveDown')) {
+            SetPixel('MoveDown');
+            MoveDown();
+        }
+    }
+
+
+
+})
+
+
+
+
 
 var ghost_1 = { element: document.getElementById('ghostOneOverlay') }
 var ghost_2 = { element: document.getElementById('ghostTwoOverlay') }
