@@ -1,343 +1,385 @@
-var maze = mze
+SetupMaze(0)
+var maze = GenMaze()
 var pacman = document.getElementById('pacmanOverlay');
+
+var ghost_1 = { element: document.getElementById('ghostOneOverlay') }
+var ghost_2 = { element: document.getElementById('ghostTwoOverlay') }
+var ghost_3 = { element: document.getElementById('ghostThreeOverlay') }
+var ghost_4 = { element: document.getElementById('ghostFourOverlay') }
 var CurrentFace = -1;
 var deltaX = 1;
 var deltaY = 1;
 var timeInterval = 10;
-var myInt;
-var currDir = 0;
-var nxtDir = 0;
-var PAUSE_key = 80;
-var LEFT_MOVE_key = 37;
-var UP_MOVE_key = 38;
-var RIGHT_MOVE_key = 39;
-var DOWN_MOVE_key = 40;
-var SIZE = 27;
-var lastState = 0;
-var x = parseInt(pacman.style.left);//x-axis(l,r)
-var y = parseInt(pacman.style.top);//y-axis(u,d)
-document.addEventListener('keydown', function (e) {
 
-    if (e.keyCode == PAUSE_key) {//game paused
-        stopPacman()
+ghost_1.x = parseInt(ghost_1.element.style.left)
+ghost_1.y = parseInt(ghost_1.element.style.top)
+ghost_1.step = 0;
+ghost_1.lastDir = 0;
+ghost_1.CrossRoad = function () {
+    var avList = []
+    if (maze[this.y / 27][(this.x / 27) - 1] != '#') {//left road
+        avList.push(0)
     }
-    else if (e.keyCode == LEFT_MOVE_key) // left
-    {
-        //debugger;
-        if (currDir != 0) {
-            nxtDir = 'l'
-        } else {
-            if (checkBlockTypeAtDirection('l') != "wall") {
-                PacmanMoveLeft()
-            }
-        }
-    }
-    else if (e.keyCode == UP_MOVE_key) // up
-    {
-        //debugger;
-        if (currDir != 0) {
-            nxtDir = 'u'
-        }
-        else {
-            if (checkBlockTypeAtDirection('u') != "wall") {
-                PacmanMoveUp()
-            }
-        }
-    }
-    else if (e.keyCode == RIGHT_MOVE_key) //right
-    {
-        //debugger;
-        if (currDir != 0) {
-            nxtDir = 'r'
-        }
-        else {
-            if (checkBlockTypeAtDirection('r') != "wall") {
-                PacmanMoveRight()
-            }
-        }
-    }
-    else if (e.keyCode == DOWN_MOVE_key) //down
-    {
-        //debugger;
-        if (currDir != 0) {
-            nxtDir = 'd'
-        }
-        else {
-            if (checkBlockTypeAtDirection('d') != "wall") {
-                PacmanMoveDown()
-            }
-        }
-    }
-    console.log(currDir + ": Current Direction")
-    console.log(nxtDir + ": Next Direction")
 
-})
-function stopPacman() {
-    nxtDir = 0
-    window.clearInterval(myInt);
+    if (maze[this.y / 27][(this.x / 27) + 1] != '#') {//right road
+        avList.push(1)
+    }
+
+    if (maze[(this.y / 27) - 1][this.x / 27] != '#') {//Up road
+        avList.push(2)
+    }
+
+    if (maze[(this.y / 27) + 1][this.x / 27] != '#') {//Down road
+        avList.push(3)
+    }
+
+    if ((this.y / 27) == 1) {//first row
+        for (var i = 0; i < avList.length; i++) {
+            if (avList[i] === 2) {
+                avList.splice(i, 1);
+            }
+        }
+    }
+    if ((this.y / 27) == 12) {//last row
+        for (var i = 0; i < avList.length; i++) {
+            if (avList[i] === 3) {
+                avList.splice(i, 1);
+            }
+        }
+    }
+    if ((this.x / 27) == 1) {//first col
+        for (var i = 0; i < avList.length; i++) {
+            if (avList[i] === 0) {
+                avList.splice(i, 1);
+            }
+        }
+    }
+    if ((this.x / 27) == 18) {//last col
+        for (var i = 0; i < avList.length; i++) {
+            if (avList[i] === 1) {
+                avList.splice(i, 1);
+            }
+        }
+    }
+    for (var i = 0; i < avList.length; i++) {
+        if (avList[i] === this.lastDir && avList.length > 1) {
+            avList.splice(i, 1);
+        }
+    }
+    return avList[((Math.random() * 10).toFixed() % avList.length)]
+
 }
-function ChangeDirction(cur, next) {
-    if (cur == next) { return; }
-    else if (next == 'u') {
-        if (checkBlockTypeAtDirection('u') != "wall") {
-            nxtDir = 0;
-            PacmanMoveUp()
-        }
-    }
-    else if (next == 'd') {
-        if (checkBlockTypeAtDirection('d') != "wall") {
-            nxtDir = 0;
-            PacmanMoveDown()
-        }
-    }
-    else if (next == 'l') {
-        if (checkBlockTypeAtDirection('l') != "wall") {
-            nxtDir = 0;
-            PacmanMoveLeft()
-        }
-    }
-    else if (next == 'r') {
-        if (checkBlockTypeAtDirection('r') != "wall") {
-            nxtDir = 0;
-            PacmanMoveRight()
-        }
-    }
-}
-function PacmanMoveLeft() {
-    currDir = 'l';
-    if (CurrentFace != -1) {
-        pacman.classList.remove(CurrentFace);
-    }
-    pacman.classList.add('MoveLeft');
-    CurrentFace = 'MoveLeft';
-
-    if (myInt != null) {
-        stopPacman()
+ghost_2.x = parseInt(ghost_2.element.style.left)
+ghost_2.y = parseInt(ghost_2.element.style.top)
+ghost_2.step = 0;
+ghost_2.lastDir = 0;
+ghost_2.CrossRoad = function () {
+    var avList = []
+    if (maze[this.y / 27][(this.x / 27) - 1] != '#') {//left road
+        avList.push(0)
     }
 
-    myInt = setInterval(function () {
-        var nxtBlk = checkBlockTypeAtDirection('l');
-        console.log(nxtBlk)
-        if (nxtBlk != null) {//step done
-            if (nxtDir != 0) {
-                if (checkBlockTypeAtDirection(nxtDir) != "wall") {
-                    ChangeDirction(currDir, nxtDir)
-                } else {
-                    x -= deltaX;
-                    pacman.style.left = (x).toString() + 'px';
-                }
-            } else {
-                if (nxtBlk == "wall")
-                    stopPacman()
-                else {
-                    x -= deltaX;
-                    pacman.style.left = (x).toString() + 'px';
-                }
+    if (maze[this.y / 27][(this.x / 27) + 1] != '#') {//right road
+        avList.push(1)
+    }
+
+    if (maze[(this.y / 27) - 1][this.x / 27] != '#') {//Up road
+        avList.push(2)
+    }
+
+    if (maze[(this.y / 27) + 1][this.x / 27] != '#') {//Down road
+        avList.push(3)
+    }
+
+    if ((this.y / 27) == 1) {//first row
+        for (var i = 0; i < avList.length; i++) {
+            if (avList[i] === 2) {
+                avList.splice(i, 1);
             }
         }
-        else {
-            x -= deltaX;
-            pacman.style.left = (x).toString() + 'px';
+    }
+    if ((this.y / 27) == 12) {//last row
+        for (var i = 0; i < avList.length; i++) {
+            if (avList[i] === 3) {
+                avList.splice(i, 1);
+            }
         }
+    }
+    if ((this.x / 27) == 1) {//first col
+        for (var i = 0; i < avList.length; i++) {
+            if (avList[i] === 0) {
+                avList.splice(i, 1);
+            }
+        }
+    }
+    if ((this.x / 27) == 18) {//last col
+        for (var i = 0; i < avList.length; i++) {
+            if (avList[i] === 1) {
+                avList.splice(i, 1);
+            }
+        }
+    }
+    for (var i = 0; i < avList.length; i++) {
+        if (avList[i] === this.lastDir) {
+            avList.splice(i, 1);
+        }
+    }
+    return avList[((Math.random() * 10).toFixed() % avList.length)]
+
+}
+ghost_3.x = parseInt(ghost_3.element.style.left)
+ghost_3.y = parseInt(ghost_3.element.style.top)
+ghost_3.step = 0;
+ghost_3.lastDir = 0;
+ghost_3.CrossRoad = function () {
+    var avList = []
+    if (maze[this.y / 27][(this.x / 27) - 1] != '#') {//left road
+        avList.push(0)
+    }
+
+    if (maze[this.y / 27][(this.x / 27) + 1] != '#') {//right road
+        avList.push(1)
+    }
+
+    if (maze[(this.y / 27) - 1][this.x / 27] != '#') {//Up road
+        avList.push(2)
+    }
+
+    if (maze[(this.y / 27) + 1][this.x / 27] != '#') {//Down road
+        avList.push(3)
+    }
+
+    if ((this.y / 27) == 1) {//first row
+        for (var i = 0; i < avList.length; i++) {
+            if (avList[i] === 2) {
+                avList.splice(i, 1);
+            }
+        }
+    }
+    if ((this.y / 27) == 12) {//last row
+        for (var i = 0; i < avList.length; i++) {
+            if (avList[i] === 3) {
+                avList.splice(i, 1);
+            }
+        }
+    }
+    if ((this.x / 27) == 1) {//first col
+        for (var i = 0; i < avList.length; i++) {
+            if (avList[i] === 0) {
+                avList.splice(i, 1);
+            }
+        }
+    }
+    if ((this.x / 27) == 18) {//last col
+        for (var i = 0; i < avList.length; i++) {
+            if (avList[i] === 1) {
+                avList.splice(i, 1);
+            }
+        }
+    }
+    for (var i = 0; i < avList.length; i++) {
+        if (avList[i] === this.lastDir) {
+            avList.splice(i, 1);
+        }
+    }
+    return avList[((Math.random() * 10).toFixed() % avList.length)]
+
+}
+ghost_4.x = parseInt(ghost_4.element.style.left)
+ghost_4.y = parseInt(ghost_4.element.style.top)
+ghost_4.step = 0;
+ghost_4.lastDir = 0;
+ghost_4.CrossRoad = function () {
+    var avList = []
+    if (maze[this.y / 27][(this.x / 27) - 1] != '#') {//left road
+        avList.push(0)
+    }
+
+    if (maze[this.y / 27][(this.x / 27) + 1] != '#') {//right road
+        avList.push(1)
+    }
+
+    if (maze[(this.y / 27) - 1][this.x / 27] != '#') {//Up road
+        avList.push(2)
+    }
+
+    if (maze[(this.y / 27) + 1][this.x / 27] != '#') {//Down road
+        avList.push(3)
+    }
+    if ((this.y / 27) == 1) {//first row
+        for (var i = 0; i < avList.length; i++) {
+            if (avList[i] === 2) {
+                avList.splice(i, 1);
+            }
+        }
+    }
+    if ((this.y / 27) == 12) {//last row
+        for (var i = 0; i < avList.length; i++) {
+            if (avList[i] === 3) {
+                avList.splice(i, 1);
+            }
+        }
+    }
+    if ((this.x / 27) == 1) {//first col
+        for (var i = 0; i < avList.length; i++) {
+            if (avList[i] === 0) {
+                avList.splice(i, 1);
+            }
+        }
+    }
+    if ((this.x / 27) == 18) {//last col
+        for (var i = 0; i < avList.length; i++) {
+            if (avList[i] === 1) {
+                avList.splice(i, 1);
+            }
+        }
+    }
+    for (var i = 0; i < avList.length; i++) {
+        if (avList[i] === this.lastDir) {
+            avList.splice(i, 1);
+        }
+    }
+    return avList[((Math.random() * 10).toFixed() % avList.length)]
+
+}
+var ghostMoves = [
+    function moveLeft(self) {
+        var stepInterval = setInterval(function () {
+            this.lastDir = 1;
+            if (this.step == 26) {
+                this.step = 0;
+                this.x -= deltaX;
+                window.clearInterval(stepInterval)
+                var dir = this.CrossRoad()
+                ghostMoves[dir](this)
+                return;
+            }
+            this.step++;
+            this.x -= deltaX;
+            this.element.style.left = (this.x).toString() + 'px';
+        }.bind(self), timeInterval);
+    }, function moveRight(self) {
+        var stepInterval = setInterval(function () {
+            this.lastDir = 0;
+            if (this.step == 26) {
+                this.x += deltaX;
+                this.step = 0;
+                window.clearInterval(stepInterval)
+                var dir = this.CrossRoad()
+                ghostMoves[dir](this)
+                return;
+            }
+            this.step++;
+            this.x += deltaX;
+            this.element.style.left = (this.x).toString() + 'px';
+        }.bind(self), timeInterval);
+    }, function moveUp(self) {
+        var stepInterval = setInterval(function () {
+            this.lastDir = 3;
+            if (this.step == 26) {
+                this.step = 0;
+                this.y -= deltaY;
+                window.clearInterval(stepInterval)
+                var dir = this.CrossRoad()
+                ghostMoves[dir](this)
+                return;
+            }
+            this.step++;
+            this.y -= deltaY;
+            this.element.style.top = (this.y).toString() + 'px';
+        }.bind(self), timeInterval);
+    }, function moveDown(self) {
+        var stepInterval = setInterval(function () {
+            this.lastDir = 2;
+            if (this.step == 26) {
+                this.step = 0;
+                this.y += deltaY;
+                window.clearInterval(stepInterval)
+                var dir = this.CrossRoad()
+                ghostMoves[dir](this)
+                return;
+            }
+            this.step++;
+            this.y += deltaY;
+            this.element.style.top = (this.y).toString() + 'px';
+        }.bind(self), timeInterval);
+    }]
+
+
+
+ghost_1.Move = ghostMoves
+ghost_2.Move = ghostMoves
+ghost_3.Move = ghostMoves
+ghost_4.Move = ghostMoves
+
+ghost_4.CrossRoad()
+var step = 0;
+setTimeout(() => {
+    var stepInterval = setInterval(function () {
+        if (step == 53) {
+            ghost_4.x += deltaX;
+            step = 0;
+            window.clearInterval(stepInterval)
+            var dir = ghost_4.CrossRoad()
+            ghost_4.Move[dir](ghost_4)
+            return;
+        }
+        step++;
+        ghost_4.x += deltaX;
+        ghost_4.element.style.left = (ghost_4.x).toString() + 'px';
     }, timeInterval);
-}
-function PacmanMoveRight() {
-    currDir = 'r';
-    if (CurrentFace != -1) {
-        pacman.classList.remove(CurrentFace);
-    }
 
-    pacman.classList.add('MoveRight');
-    CurrentFace = 'MoveRight';
+}, 1000);
 
-    if (myInt != null) {
-        stopPacman()
-    }
-
-    myInt = setInterval(function () {
-        var nxtBlk = checkBlockTypeAtDirection('r');
-        console.log(nxtBlk)
-        if (nxtBlk != null) {//step done
-            if (nxtDir != 0) {
-                if (checkBlockTypeAtDirection(nxtDir) != "wall") {
-                    ChangeDirction(currDir, nxtDir)
-                } else {
-                    x += deltaX;
-                    pacman.style.left = (x).toString() + 'px';
-                }
-            } else {
-                if (nxtBlk == "wall")
-                    stopPacman()
-                else {
-                    x += deltaX;
-                    pacman.style.left = (x).toString() + 'px';
-                }
-            }
+step = 0;
+setTimeout(() => {
+    var stepInterval = setInterval(function () {
+        if (step == 80) {
+            ghost_3.x += deltaX;
+            step = 0;
+            window.clearInterval(stepInterval)
+            var dir = ghost_3.CrossRoad()
+            ghost_3.Move[dir](ghost_3)
+            return;
         }
-        else {
-            x += deltaX;
-            pacman.style.left = (x).toString() + 'px';
-        }
+        step++;
+        ghost_3.x += deltaX;
+        ghost_3.element.style.left = (ghost_3.x).toString() + 'px';
     }, timeInterval);
-}
-function PacmanMoveUp() {
-    currDir = 'u';
 
-    if (CurrentFace != -1) {
-        pacman.classList.remove(CurrentFace);
-    }
+}, 4000);
 
-    pacman.classList.add('MoveUp');
-    CurrentFace = 'MoveUp';
-
-    if (myInt != null) {
-        stopPacman()
-    }
-
-    myInt = setInterval(function () {
-        var nxtBlk = checkBlockTypeAtDirection('u');
-        console.log(nxtBlk)
-        if (nxtBlk != null) {//step done
-            if (nxtDir != 0) {
-                if (checkBlockTypeAtDirection(nxtDir) != "wall") {
-                    ChangeDirction(currDir, nxtDir)
-                } else {
-                    y -= deltaY;
-                    pacman.style.top = (y).toString() + 'px';
-                }
-            } else {
-                if (nxtBlk == "wall")
-                    stopPacman()
-                else {
-                    y -= deltaY;
-                    pacman.style.top = (y).toString() + 'px';
-                }
-            }
+step = 0;
+setTimeout(() => {
+    var stepInterval = setInterval(function () {
+        if (step == 53) {
+            ghost_2.x += deltaX;
+            step = 0;
+            window.clearInterval(stepInterval)
+            var dir = ghost_2.CrossRoad()
+            ghost_2.Move[dir](ghost_2)
+            return;
         }
-        else {
-            y -= deltaY;
-            pacman.style.top = (y).toString() + 'px';
-        }
+        step++;
+        ghost_2.x += deltaX;
+        ghost_2.element.style.left = (ghost_2.x).toString() + 'px';
     }, timeInterval);
-}
-function PacmanMoveDown() {
-    currDir = 'd';
 
-    if (CurrentFace != -1) {
-        pacman.classList.remove(CurrentFace);
-    }
-
-    pacman.classList.add('MoveDown');
-    CurrentFace = 'MoveDown';
-
-    if (myInt != null) {
-        stopPacman()
-    }
-
-    myInt = setInterval(function () {
-        var nxtBlk = checkBlockTypeAtDirection('d');
-        console.log(nxtBlk)
-        if (nxtBlk != null) {//step done
-            if (nxtDir != 0) {
-                if (checkBlockTypeAtDirection(nxtDir) != "wall") {
-                    ChangeDirction(currDir, nxtDir)
-                } else {
-                    y += deltaY;
-                    pacman.style.left = (y).toString() + 'px';
-                }
-            } else {
-                if (nxtBlk == "wall")
-                    stopPacman()
-                else {
-                    y += deltaY;
-                    pacman.style.top = (y).toString() + 'px';
-                }
-            }
+}, 8000);
+step = 0;
+setTimeout(() => {
+    var stepInterval = setInterval(function () {
+        if (step == 80) {
+            ghost_1.x += deltaX;
+            step = 0;
+            window.clearInterval(stepInterval)
+            var dir = ghost_1.CrossRoad()
+            ghost_1.Move[dir](ghost_1)
+            return;
         }
-        else {
-            y += deltaY;
-            pacman.style.top = (y).toString() + 'px';
-        }
+        step++;
+        ghost_1.x += deltaX;
+        ghost_1.element.style.left = (ghost_1.x).toString() + 'px';
     }, timeInterval);
-}
-function checkBlockTypeAtDirection(dir) {
-    if (dir == 'l') {
-        var type = null;
-        var block = (document.getElementById(`bt_${y}+l${x - 27}`) != null) ? true : false;
-        if (block == true) {
-            if (maze[y / 27][(x - 27) / 27] == '.') {
-                type = "food"
-            }
-            else if (maze[y / 27][(x - 27) / 27] == 'x') {
-                type = "empty";
-            }
 
-            else if (maze[y / 27][(x - 27) / 27] == 'P') {
-                type = "empty";
-            }
-            else {
-                type = "wall"
-            }
-        }
-        return type;
-    }
-    else if (dir == 'r') {
-        var type = null;
-        var block = (document.getElementById(`bt_${y}+l${x + 27}`) != null) ? true : false;
-        if (block == true) {
-            if (maze[y / 27][(x + 27) / 27] == '.') {
-                type = "food";
-            }
-            else if (maze[y / 27][(x + 27) / 27] == 'x') {
-                type = "empty";
-            }
-
-            else if (maze[y / 27][(x + 27) / 27] == 'P') {
-                type = "empty";
-            }
-            else {
-                type = "wall"
-            }
-        }
-        return type;
-    }
-    else if (dir == 'u') {
-        var type = null
-        var block = (document.getElementById(`bt_${y - 27}+l${x}`) != null) ? true : false;
-        if (block == true) {
-            if (maze[(y - 27) / 27][x / 27] == '.') {
-                type = "food";
-            }
-            else if (maze[(y - 27) / 27][x / 27] == 'x') {
-                type = "empty";
-            }
-            else if (maze[(y - 27) / 27][x / 27] == 'P') {
-                type = "empty";
-            }
-            else {
-                type = "wall"
-            }
-        }
-        return type;
-    }
-    else if (dir == 'd') {
-        var type = null
-        var block = (document.getElementById(`bt_${y + 27}+l${x}`) != null) ? true : false;
-        if (block == true) {
-            if (maze[(y + 27) / 27][x / 27] == '.') {
-                type = "food";
-            }
-            else if (maze[(y + 27) / 27][x / 27] == 'x') {
-                type = "empty";
-            }
-
-            else if (maze[(y + 27) / 27][x / 27] == 'P') {
-                type = "empty";
-            }
-            else {
-                type = "wall"
-            }
-        }
-        return type;
-    }
-}
+}, 16000);

@@ -31,15 +31,105 @@ body {
 }
 #pacmanOverlay {
     position: absolute;
-    background-image: url(resources/Right/pac1.png);
     top: 0px;
     left: 0px;
-    height: 27px;
     width: 27px;
-    /* border:1px solid yellow; */
+    height: 27px;
     z-index: 2;
 }
+#ghostOneOverlay {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 27px;
+    height: 27px;
+    background: url(resources/g11.png);
+    z-index: 2;
+    animation: GhostOneAnimation;
+    animation-duration: 0.3s;
+    animation-iteration-count: infinite;
+}
+#ghostTwoOverlay {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 27px;
+    height: 27px;
+    background: url(resources/g21.png);
+    z-index: 2;
+    animation: GhostTwoAnimation;
+    animation-duration: 0.3s;
+    animation-iteration-count: infinite;
+}
+#ghostThreeOverlay {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 27px;
+    height: 27px;
+    background: url(resources/g31.png);
+    z-index: 2;
+    animation: GhostThreeAnimation;
+    animation-duration: 0.3s;
+    animation-iteration-count: infinite;
+}
+#ghostFourOverlay {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 27px;
+    height: 27px;
+    background: url(resources/g41.png);
+    z-index: 2;
+    animation: GhostFourAnimation;
+    animation-duration: 0.3s;
+    animation-iteration-count: infinite;
+}
 
+@keyframes GhostOneAnimation {
+    0% {
+         background-image: url(resources/g11.png)
+     }
+     50% {
+         background-image: url(resources/g12.png)
+     }
+     100% {
+         background-image: url(resources/g13.png)
+     }
+ }
+ @keyframes GhostTwoAnimation {
+    0% {
+         background-image: url(resources/g21.png)
+     }
+     50% {
+         background-image: url(resources/g22.png)
+     }
+     100% {
+         background-image: url(resources/g23.png)
+     }
+ }
+ @keyframes GhostThreeAnimation {
+    0% {
+         background-image: url(resources/g31.png)
+     }
+     50% {
+         background-image: url(resources/g32.png)
+     }
+     100% {
+         background-image: url(resources/g33.png)
+     }
+ }
+ @keyframes GhostFourAnimation {
+    0% {
+         background-image: url(resources/g41.png)
+     }
+     50% {
+         background-image: url(resources/g42.png)
+     }
+     100% {
+         background-image: url(resources/g43.png)
+     }
+ }
 
 @keyframes MoveRight {
     0% {
