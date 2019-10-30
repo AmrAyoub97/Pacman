@@ -93,16 +93,11 @@ body {
     animation-duration: 0.3s;
     animation-iteration-count: infinite;
 }
-#Winner {
+#dialog {
     position: absolute;
-    opacity: 0.7;
-    background-image: url(resources/winner.jpg);
-    top: 120px;
-    left: 130px;
-    width: 251px;
-    height: 164px;
-    z-index: 3;
-    display: none;
+    left: 185px;
+    top: 150px;
+    z-index: 5;
 }
 
 @keyframes GhostOneAnimation {

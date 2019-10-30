@@ -24,7 +24,6 @@ function SetupUi(lev) {
             }
             img.src = 'resources/' + element + '.png';
             img.id = t.toString() + left.toString();
-            console.log(img.id);
             img.setAttribute('style',
                 `height:27px;
             width:27px;
