@@ -6,7 +6,7 @@ var myInt;
 
 var PacmanX = parseInt(pacman.style.left);
 var PacmanY = parseInt(pacman.style.top);
-var delay = 35;
+var delay = 20;
 
 var Inprogressflag = false;
 var contstate;
@@ -17,7 +17,7 @@ var maze;
 maze = GenMaze(Currentlevel);
 var Nrow = maze.length;
 var Ncol = maze[0].length;
-var Points=0;
+var Points = 0;
 
 
 function checkbroder(Currentx, Currenty, CurrentFace) {
@@ -279,14 +279,14 @@ var MoveLeft = function () {
             NumofFood -= 1;
             maze[row][col] = 'x';
 
-            document.getElementById('Points').innerHTML=` ${Points}`;
-            Points+=1;
+            document.getElementById('Points').innerHTML = ` ${Points}`;
+            Points += 1;
 
             if (audio.duration > 0)
                 audio.play();
             if (NumofFood == 0) {
-                Points=1
-                document.getElementById('Points').innerHTML=` ${Points}`;
+                Points = 1
+                document.getElementById('Points').innerHTML = ` ${Points}`;
                 window.clearInterval(myInt);
                 showStatus('w')
                 setTimeout(function () {
@@ -346,13 +346,15 @@ var MoveRight = function () {
             document.getElementById((PacmanY).toString() + (PacmanX).toString()).src = 'resources/' + 'x' + '.png';
             maze[row][col] = 'x';
             NumofFood -= 1;
+            document.getElementById('Points').innerHTML = ` ${Points}`;
+            Points += 1;
 
             if (audio.duration > 0)
                 audio.play();
 
             if (NumofFood == 0) {
-                Points=1
-                document.getElementById('Points').innerHTML=` ${Points}`;
+                Points = 1
+                document.getElementById('Points').innerHTML = ` ${Points}`;
                 window.clearInterval(myInt);
                 showStatus('w')
 
@@ -427,13 +429,15 @@ var MoveUp = function () {
         if (PacmanY % 27 == 0 && PacmanX % 27 == 0 && maze[row][col] == '.') {
             document.getElementById((PacmanY).toString() + (PacmanX).toString()).src = 'resources/' + 'x' + '.png';
             NumofFood -= 1;
+            document.getElementById('Points').innerHTML = ` ${Points}`;
+            Points += 1;
             if (audio.duration > 0)
                 audio.play();
             maze[row][col] = 'x';
             if (NumofFood == 0) {
-                
-                Points=1
-                document.getElementById('Points').innerHTML=` ${Points}`;
+
+                Points = 1
+                document.getElementById('Points').innerHTML = ` ${Points}`;
                 window.clearInterval(myInt);
                 showStatus('w')
 
@@ -506,10 +510,12 @@ var MoveDown = function () {
 
             document.getElementById((PacmanY).toString() + (PacmanX).toString()).src = 'resources/' + 'x' + '.png';
             NumofFood -= 1;
+            document.getElementById('Points').innerHTML = ` ${Points}`;
+            Points += 1;
             maze[row][col] = 'x';
             if (NumofFood == 0) {
-                Points=1
-                document.getElementById('Points').innerHTML=` ${Points}`;
+                Points = 1
+                document.getElementById('Points').innerHTML = ` ${Points}`;
                 window.clearInterval(myInt);
                 showStatus('w')
                 setTimeout(function () {
