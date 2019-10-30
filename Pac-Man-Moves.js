@@ -13,6 +13,7 @@ var audio = new Audio('resources/waka.mp3');
 maze = GenMaze(Currentlevel);
 var Nrow = maze.length;
 var Ncol = maze[0].length;
+var Points=0;
 
 
 function checkbroder(Currentx, Currenty, CurrentFace) {
@@ -274,9 +275,14 @@ var MoveLeft = function () {
             NumofFood -= 1;
             maze[row][col] = 'x';
 
+            document.getElementById('Points').innerHTML=` ${Points}`;
+            Points+=1;
+
             if (audio.duration > 0)
                 audio.play();
             if (NumofFood == 0) {
+                Points=1
+                document.getElementById('Points').innerHTML=` ${Points}`;
                 window.clearInterval(myInt);
                 document.getElementById('Winner').setAttribute('style',
                     'display: block');
@@ -335,6 +341,9 @@ var MoveRight = function () {
 
         if (y % 27 == 0 && x % 27 == 0 && maze[row][col] == '.') {
             document.getElementById((y).toString() + (x).toString()).src = 'resources/' + 'x' + '.png';
+            debugger;
+            document.getElementById('Points').innerHTML=` ${Points}`;
+            Points+=1;
             maze[row][col] = 'x';
             NumofFood -= 1;
 
@@ -342,6 +351,8 @@ var MoveRight = function () {
                 audio.play();
 
             if (NumofFood == 0) {
+                Points=1
+                document.getElementById('Points').innerHTML=` ${Points}`;
                 window.clearInterval(myInt);
                 document.getElementById('Winner').setAttribute('style',
                     'display: block');
@@ -352,7 +363,6 @@ var MoveRight = function () {
                 setTimeout(function () {
 
                     document.getElementById('Winner').setAttribute('style', 'display: none');
-
                     NumofFood = UpdateUi(Currentlevel + 1);
                     maze = GenMaze(Currentlevel + 1);
                     Currentlevel += 1;
@@ -415,11 +425,16 @@ var MoveUp = function () {
         var col = x / 27;
         if (y % 27 == 0 && x % 27 == 0 && maze[row][col] == '.') {
             document.getElementById((y).toString() + (x).toString()).src = 'resources/' + 'x' + '.png';
+            document.getElementById('Points').innerHTML=` ${Points}`;
+            Points+=1;
             NumofFood -= 1;
             if (audio.duration > 0)
                 audio.play();
             maze[row][col] = 'x';
             if (NumofFood == 0) {
+                
+                Points=1
+                document.getElementById('Points').innerHTML=` ${Points}`;
                 window.clearInterval(myInt);
                 document.getElementById('Winner').setAttribute('style',
                     'display: block');
@@ -490,10 +505,15 @@ var MoveDown = function () {
             if (audio.duration > 0)
                 audio.play();
 
+            document.getElementById('Points').innerHTML=` ${Points}`;
+            Points+=1;
+
             document.getElementById((y).toString() + (x).toString()).src = 'resources/' + 'x' + '.png';
             NumofFood -= 1;
             maze[row][col] = 'x';
             if (NumofFood == 0) {
+                Points=1
+                document.getElementById('Points').innerHTML=` ${Points}`;
                 window.clearInterval(myInt);
                 document.getElementById('Winner').setAttribute('style',
                     'display: block');
