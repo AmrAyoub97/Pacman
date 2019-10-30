@@ -3,13 +3,17 @@ var NumofFood = SetupUi(Currentlevel);
 var pacman = document.getElementById('pacmanOverlay');
 var CurrentFace;
 var myInt;
-var x = parseInt(pacman.style.left);
-var y = parseInt(pacman.style.top);
+
+var PacmanX = parseInt(pacman.style.left);
+var PacmanY = parseInt(pacman.style.top);
 var delay = 35;
-var maze;
+
 var Inprogressflag = false;
 var contstate;
+
 var audio = new Audio('resources/waka.mp3');
+
+var maze;
 maze = GenMaze(Currentlevel);
 var Nrow = maze.length;
 var Ncol = maze[0].length;
@@ -47,14 +51,14 @@ function checkbroder(Currentx, Currenty, CurrentFace) {
 function CheckWall(DesireState) {
 
     if ((DesireState == 'MoveUp' || DesireState == 'MoveDown') && CurrentFace == 'MoveLeft') {
-        var tempx = x;
-        var tempy = y;
+        var tempx = PacmanX;
+        var tempy = PacmanY;
 
-        if (x % 27 < 21) {
-            tempx = x - (x % 27)
+        if (PacmanX % 27 < 21) {
+            tempx = PacmanX - (PacmanX % 27)
         }
         else {
-            tempx = x + (27 - (x % 27))
+            tempx = PacmanX + (27 - (PacmanX % 27))
         }
 
         if (DesireState == 'MoveUp' && (maze[(tempy / 27) - 1][tempx / 27] == '.' || maze[(tempy / 27) - 1][tempx / 27] == 'x'))
@@ -66,13 +70,13 @@ function CheckWall(DesireState) {
         return true;
     }
     else if ((DesireState == 'MoveUp' || DesireState == 'MoveDown') && CurrentFace == 'MoveRight') {
-        var tempx = x;
-        var tempy = y;
-        if (x % 27 > 6) {
-            tempx = x + (27 - (x % 27))
+        var tempx = PacmanX;
+        var tempy = PacmanY;
+        if (PacmanX % 27 > 6) {
+            tempx = PacmanX + (27 - (PacmanX % 27))
         }
         else {
-            tempx = x - (x % 27)
+            tempx = PacmanX - (PacmanX % 27)
         }
         if (DesireState == 'MoveUp' && (maze[(tempy / 27) - 1][tempx / 27] == '.' || maze[(tempy / 27) - 1][tempx / 27] == 'x'))
             return false;
@@ -83,14 +87,14 @@ function CheckWall(DesireState) {
         return true;
     }
     else if ((DesireState == 'MoveRight' || DesireState == 'MoveLeft') && CurrentFace == 'MoveUp') {
-        var tempx = x;
-        var tempy = y;
+        var tempx = PacmanX;
+        var tempy = PacmanY;
 
-        if (y % 27 < 21) {
-            tempy = y - (y % 27);
+        if (PacmanY % 27 < 21) {
+            tempy = PacmanY - (PacmanY % 27);
         }
         else {
-            tempy = y + (27 - y % 27);
+            tempy = PacmanY + (27 - PacmanY % 27);
         }
         if (DesireState == 'MoveRight' && (maze[tempy / 27][(tempx / 27) + 1] == '.' || maze[tempy / 27][(tempx / 27) + 1] == 'x'))
             return false;
@@ -101,13 +105,13 @@ function CheckWall(DesireState) {
     }
 
     else if ((DesireState == 'MoveRight' || DesireState == 'MoveLeft') && CurrentFace == 'MoveDown') {
-        var tempx = x;
-        var tempy = y;
-        if (y % 27 > 6) {
-            tempy = y + (27 - y % 27);
+        var tempx = PacmanX;
+        var tempy = PacmanY;
+        if (PacmanY % 27 > 6) {
+            tempy = PacmanY + (27 - PacmanY % 27);
         }
         else {
-            tempy = y - (y % 27);
+            tempy = PacmanY - (PacmanY % 27);
         }
         if (DesireState == 'MoveRight' && (maze[tempy / 27][(tempx / 27) + 1] == '.' || maze[tempy / 27][(tempx / 27) + 1] == 'x'))
             return false;
@@ -127,25 +131,25 @@ function SetPixel(DesireState) {
             window.clearInterval(contstate);
         }
 
-        if (x % 27 < 21) {
+        if (PacmanX % 27 < 21) {
             contstate = setInterval(function () {
-                if (x % 27 == 0) {
+                if (PacmanX % 27 == 0) {
                     window.clearInterval(contstate);
                 }
                 else {
-                    x -= 3;
-                    pacman.style.left = (x).toString() + 'px';
+                    PacmanX -= 3;
+                    pacman.style.left = (PacmanX).toString() + 'px';
                 }
             }, delay);
         }
         else {
             contstate = setInterval(function () {
-                if (x % 27 == 0) {
+                if (PacmanX % 27 == 0) {
                     window.clearInterval(contstate);
                 }
                 else {
-                    x += 3;
-                    pacman.style.left = (x).toString() + 'px';
+                    PacmanX += 3;
+                    pacman.style.left = (PacmanX).toString() + 'px';
                 }
             }, delay);
         }
@@ -159,27 +163,27 @@ function SetPixel(DesireState) {
             window.clearInterval(contstate);
         }
 
-        if (x % 27 > 6) {
+        if (PacmanX % 27 > 6) {
             contstate = setInterval(function () {
-                if (x % 27 == 0) {
+                if (PacmanX % 27 == 0) {
                     window.clearInterval(contstate);
                 }
                 else {
-                    x += 3;
-                    pacman.style.left = (x).toString() + 'px';
+                    PacmanX += 3;
+                    pacman.style.left = (PacmanX).toString() + 'px';
                 }
 
             }, delay);
         }
         else {
             contstate = setInterval(function () {
-                if (x % 27 == 0) {
+                if (PacmanX % 27 == 0) {
 
                     window.clearInterval(contstate);
                 }
                 else {
-                    x -= 3;
-                    pacman.style.left = (x).toString() + 'px';
+                    PacmanX -= 3;
+                    pacman.style.left = (PacmanX).toString() + 'px';
                 }
             }, delay);
         }
@@ -192,26 +196,26 @@ function SetPixel(DesireState) {
         if (contstate != null) {
             window.clearInterval(contstate);
         }
-        if (y % 27 < 21) {
+        if (PacmanY % 27 < 21) {
             contstate = setInterval(function () {
-                if (y % 27 == 0) {
+                if (PacmanY % 27 == 0) {
                     window.clearInterval(contstate);
                 }
                 else {
-                    y -= 3;
-                    pacman.style.top = (y).toString() + 'px';
+                    PacmanY -= 3;
+                    pacman.style.top = (PacmanY).toString() + 'px';
                 }
             }, delay - 30);
         }
         else {
 
             contstate = setInterval(function () {
-                if (y % 27 == 0) {
+                if (PacmanY % 27 == 0) {
                     window.clearInterval(contstate);
                 }
                 else {
-                    y += 3;
-                    pacman.style.top = (y).toString() + 'px';
+                    PacmanY += 3;
+                    pacman.style.top = (PacmanY).toString() + 'px';
                 }
             }, delay - 30);
 
@@ -225,14 +229,14 @@ function SetPixel(DesireState) {
         if (contstate != null) {
             window.clearInterval(contstate);
         }
-        if (y % 27 > 6) {
+        if (PacmanY % 27 > 6) {
             contstate = setInterval(function () {
-                if (y % 27 == 0) {
+                if (PacmanY % 27 == 0) {
                     window.clearInterval(contstate);
                 }
                 else {
-                    y += 3;
-                    pacman.style.top = (y).toString() + 'px';
+                    PacmanY += 3;
+                    pacman.style.top = (PacmanY).toString() + 'px';
                 }
             }, delay - 30);
         }
@@ -240,12 +244,12 @@ function SetPixel(DesireState) {
         else {
 
             contstate = setInterval(function () {
-                if (y % 27 == 0) {
+                if (PacmanY % 27 == 0) {
                     window.clearInterval(contstate);
                 }
                 else {
-                    y -= 3;
-                    pacman.style.top = (y).toString() + 'px';
+                    PacmanY -= 3;
+                    pacman.style.top = (PacmanY).toString() + 'px';
                 }
             }, delay - 30);
 
@@ -267,11 +271,11 @@ var MoveLeft = function () {
     }
     myInt = setInterval(function () {
 
-        var row = y / 27;
-        var col = x / 27;
+        var row = PacmanY / 27;
+        var col = PacmanX / 27;
 
-        if (y % 27 == 0 && x % 27 == 0 && maze[row][col] == '.') {
-            document.getElementById((y).toString() + (x).toString()).src = 'resources/' + 'x' + '.png';
+        if (PacmanY % 27 == 0 && PacmanX % 27 == 0 && maze[row][col] == '.') {
+            document.getElementById((PacmanY).toString() + (PacmanX).toString()).src = 'resources/' + 'x' + '.png';
             NumofFood -= 1;
             maze[row][col] = 'x';
 
@@ -284,21 +288,20 @@ var MoveLeft = function () {
                 Points=1
                 document.getElementById('Points').innerHTML=` ${Points}`;
                 window.clearInterval(myInt);
-                document.getElementById('Winner').setAttribute('style',
-                    'display: block');
+                showStatus('w')
                 setTimeout(function () {
 
 
                 }, 1000);
                 setTimeout(function () {
 
-                    document.getElementById('Winner').setAttribute('style', 'display: none');
+                    document.getElementById('dialog').setAttribute('style', 'display: none');
 
                     NumofFood = UpdateUi(Currentlevel + 1);
                     maze = GenMaze(Currentlevel + 1);
                     Currentlevel += 1;
-                    x = parseInt(pacman.style.left);
-                    y = parseInt(pacman.style.top);
+                    PacmanX = parseInt(pacman.style.left);
+                    PacmanY = parseInt(pacman.style.top);
                     var Nrow = maze.length;
                     var Ncol = maze[0].length;
 
@@ -311,13 +314,13 @@ var MoveLeft = function () {
 
         }
 
-        if (x % 27 == 0 && checkbroder(row, col, CurrentFace)) {
+        if (PacmanX % 27 == 0 && checkbroder(row, col, CurrentFace)) {
             window.clearInterval(myInt);
         }
 
         else {
-            x -= 3;
-            pacman.style.left = (x).toString() + 'px';
+            PacmanX -= 3;
+            pacman.style.left = (PacmanX).toString() + 'px';
         }
 
 
@@ -336,14 +339,19 @@ var MoveRight = function () {
     }
     myInt = setInterval(function () {
 
-        var row = y / 27;
-        var col = x / 27;
+        var row = PacmanY / 27;
+        var col = PacmanX / 27;
 
+<<<<<<< HEAD
         if (y % 27 == 0 && x % 27 == 0 && maze[row][col] == '.') {
             document.getElementById((y).toString() + (x).toString()).src = 'resources/' + 'x' + '.png';
             debugger;
             document.getElementById('Points').innerHTML=` ${Points}`;
             Points+=1;
+=======
+        if (PacmanY % 27 == 0 && PacmanX % 27 == 0 && maze[row][col] == '.') {
+            document.getElementById((PacmanY).toString() + (PacmanX).toString()).src = 'resources/' + 'x' + '.png';
+>>>>>>> 9c2ac830a8aca7200aa569a16eba3bb83274c20f
             maze[row][col] = 'x';
             NumofFood -= 1;
 
@@ -354,20 +362,25 @@ var MoveRight = function () {
                 Points=1
                 document.getElementById('Points').innerHTML=` ${Points}`;
                 window.clearInterval(myInt);
-                document.getElementById('Winner').setAttribute('style',
-                    'display: block');
+                showStatus('w')
+
                 setTimeout(function () {
 
 
                 }, 1000);
                 setTimeout(function () {
 
+<<<<<<< HEAD
                     document.getElementById('Winner').setAttribute('style', 'display: none');
+=======
+                    document.getElementById('dialog').setAttribute('style', 'display: none');
+
+>>>>>>> 9c2ac830a8aca7200aa569a16eba3bb83274c20f
                     NumofFood = UpdateUi(Currentlevel + 1);
                     maze = GenMaze(Currentlevel + 1);
                     Currentlevel += 1;
-                    x = parseInt(pacman.style.left);
-                    y = parseInt(pacman.style.top);
+                    PacmanX = parseInt(pacman.style.left);
+                    PacmanY = parseInt(pacman.style.top);
                     var Nrow = maze.length;
                     var Ncol = maze[0].length;
 
@@ -380,23 +393,23 @@ var MoveRight = function () {
 
         }
 
-        if (x % 27 == 0) {
+        if (PacmanX % 27 == 0) {
 
-            if (y % 27 == 0 && checkbroder(row, col, CurrentFace))
+            if (PacmanY % 27 == 0 && checkbroder(row, col, CurrentFace))
                 window.clearInterval(myInt);
 
 
 
             else {
-                x += 3;
-                pacman.style.left = (x).toString() + 'px';
+                PacmanX += 3;
+                pacman.style.left = (PacmanX).toString() + 'px';
             }
 
         }
 
         else {
-            x += 3;
-            pacman.style.left = (x).toString() + 'px';
+            PacmanX += 3;
+            pacman.style.left = (PacmanX).toString() + 'px';
         }
 
 
@@ -421,12 +434,19 @@ var MoveUp = function () {
 
     myInt = setInterval(function () {
 
+<<<<<<< HEAD
         var row = y / 27;
         var col = x / 27;
         if (y % 27 == 0 && x % 27 == 0 && maze[row][col] == '.') {
             document.getElementById((y).toString() + (x).toString()).src = 'resources/' + 'x' + '.png';
             document.getElementById('Points').innerHTML=` ${Points}`;
             Points+=1;
+=======
+        var row = PacmanY / 27;
+        var col = PacmanX / 27;
+        if (PacmanY % 27 == 0 && PacmanX % 27 == 0 && maze[row][col] == '.') {
+            document.getElementById((PacmanY).toString() + (PacmanX).toString()).src = 'resources/' + 'x' + '.png';
+>>>>>>> 9c2ac830a8aca7200aa569a16eba3bb83274c20f
             NumofFood -= 1;
             if (audio.duration > 0)
                 audio.play();
@@ -436,21 +456,21 @@ var MoveUp = function () {
                 Points=1
                 document.getElementById('Points').innerHTML=` ${Points}`;
                 window.clearInterval(myInt);
-                document.getElementById('Winner').setAttribute('style',
-                    'display: block');
+                showStatus('w')
+
                 setTimeout(function () {
 
 
                 }, 1000);
                 setTimeout(function () {
 
-                    document.getElementById('Winner').setAttribute('style', 'display: none');
+                    document.getElementById('dialog').setAttribute('style', 'display: none');
 
                     NumofFood = UpdateUi(Currentlevel + 1);
                     maze = GenMaze(Currentlevel + 1);
                     Currentlevel += 1;
-                    x = parseInt(pacman.style.left);
-                    y = parseInt(pacman.style.top);
+                    PacmanX = parseInt(pacman.style.left);
+                    PacmanY = parseInt(pacman.style.top);
                     var Nrow = maze.length;
                     var Ncol = maze[0].length;
 
@@ -465,20 +485,20 @@ var MoveUp = function () {
 
         }
 
-        if (y % 27 == 0) {
+        if (PacmanY % 27 == 0) {
 
-            if (x % 27 == 0 && checkbroder(row, Math.ceil(col), CurrentFace))
+            if (PacmanX % 27 == 0 && checkbroder(row, Math.ceil(col), CurrentFace))
                 window.clearInterval(myInt);
 
             else {
-                y -= 3;
-                pacman.style.top = (y).toString() + 'px';
+                PacmanY -= 3;
+                pacman.style.top = (PacmanY).toString() + 'px';
             }
         }
 
         else {
-            y -= 3;
-            pacman.style.top = (y).toString() + 'px';
+            PacmanY -= 3;
+            pacman.style.top = (PacmanY).toString() + 'px';
         }
 
 
@@ -498,38 +518,39 @@ var MoveDown = function () {
         window.clearInterval(myInt);
     }
     myInt = setInterval(function () {
-        var row = y / 27;
-        var col = x / 27;
+        var row = PacmanY / 27;
+        var col = PacmanX / 27;
 
-        if (y % 27 == 0 && x % 27 == 0 && maze[row][col] == '.') {
+        if (PacmanY % 27 == 0 && PacmanX % 27 == 0 && maze[row][col] == '.') {
             if (audio.duration > 0)
                 audio.play();
 
+<<<<<<< HEAD
             document.getElementById('Points').innerHTML=` ${Points}`;
             Points+=1;
 
             document.getElementById((y).toString() + (x).toString()).src = 'resources/' + 'x' + '.png';
+=======
+            document.getElementById((PacmanY).toString() + (PacmanX).toString()).src = 'resources/' + 'x' + '.png';
+>>>>>>> 9c2ac830a8aca7200aa569a16eba3bb83274c20f
             NumofFood -= 1;
             maze[row][col] = 'x';
             if (NumofFood == 0) {
                 Points=1
                 document.getElementById('Points').innerHTML=` ${Points}`;
                 window.clearInterval(myInt);
-                document.getElementById('Winner').setAttribute('style',
-                    'display: block');
+                showStatus('w')
                 setTimeout(function () {
-
-
                 }, 1000);
                 setTimeout(function () {
 
-                    document.getElementById('Winner').setAttribute('style', 'display: none');
+                    document.getElementById('dialog').setAttribute('style', 'display: none');
 
                     NumofFood = UpdateUi(Currentlevel + 1);
                     maze = GenMaze(Currentlevel + 1);
                     Currentlevel += 1;
-                    x = parseInt(pacman.style.left);
-                    y = parseInt(pacman.style.top);
+                    PacmanX = parseInt(pacman.style.left);
+                    PacmanY = parseInt(pacman.style.top);
                     var Nrow = maze.length;
                     var Ncol = maze[0].length;
 
@@ -543,20 +564,20 @@ var MoveDown = function () {
             }
         }
 
-        if (y % 27 == 0) {
-            if (x % 27 == 0 && checkbroder(row, col, CurrentFace))
+        if (PacmanY % 27 == 0) {
+            if (PacmanX % 27 == 0 && checkbroder(row, col, CurrentFace))
                 window.clearInterval(myInt);
 
             else {
-                y += 3;
-                pacman.style.top = (y).toString() + 'px';
+                PacmanY += 3;
+                pacman.style.top = (PacmanY).toString() + 'px';
             }
 
         }
 
         else {
-            y += 3;
-            pacman.style.top = (y).toString() + 'px';
+            PacmanY += 3;
+            pacman.style.top = (PacmanY).toString() + 'px';
         }
 
 
@@ -564,8 +585,6 @@ var MoveDown = function () {
 }
 
 document.addEventListener('keydown', function (e) {
-
-    //console.log(e.keyCode);
 
     // if (e.keyCode == 80){//game paused
     //     window.clearInterval(myInt);
@@ -609,8 +628,6 @@ document.addEventListener('keydown', function (e) {
 
 
 
-
-
 var ghost_1 = { element: document.getElementById('ghostOneOverlay') }
 var ghost_2 = { element: document.getElementById('ghostTwoOverlay') }
 var ghost_3 = { element: document.getElementById('ghostThreeOverlay') }
@@ -621,35 +638,35 @@ var deltaY = 1;
 var timeInterval = 10;
 
 ghost_1.x = parseInt(ghost_1.element.style.left)
-ghost_1.y = parseInt(ghost_1.element.style.top)
+ghost_1.PacmanY = parseInt(ghost_1.element.style.top)
 ghost_1.step = 0;
 ghost_1.lastDir = 0;
 ghost_1.CrossRoad = function () {
     var avList = []
-    if (maze[this.y / 27][(this.x / 27) - 1] != '#') {//left road
+    if (maze[this.PacmanY / 27][(this.x / 27) - 1] != '#') {//left road
         avList.push(0)
     }
 
-    if (maze[this.y / 27][(this.x / 27) + 1] != '#') {//right road
+    if (maze[this.PacmanY / 27][(this.x / 27) + 1] != '#') {//right road
         avList.push(1)
     }
 
-    if (maze[(this.y / 27) - 1][this.x / 27] != '#') {//Up road
+    if (maze[(this.PacmanY / 27) - 1][this.x / 27] != '#') {//Up road
         avList.push(2)
     }
 
-    if (maze[(this.y / 27) + 1][this.x / 27] != '#') {//Down road
+    if (maze[(this.PacmanY / 27) + 1][this.x / 27] != '#') {//Down road
         avList.push(3)
     }
 
-    if ((this.y / 27) == 1) {//first row
+    if ((this.PacmanY / 27) == 1) {//first row
         for (var i = 0; i < avList.length; i++) {
             if (avList[i] === 2) {
                 avList.splice(i, 1);
             }
         }
     }
-    if ((this.y / 27) == 12) {//last row
+    if ((this.PacmanY / 27) == 12) {//last row
         for (var i = 0; i < avList.length; i++) {
             if (avList[i] === 3) {
                 avList.splice(i, 1);
@@ -679,35 +696,35 @@ ghost_1.CrossRoad = function () {
 
 }
 ghost_2.x = parseInt(ghost_2.element.style.left)
-ghost_2.y = parseInt(ghost_2.element.style.top)
+ghost_2.PacmanY = parseInt(ghost_2.element.style.top)
 ghost_2.step = 0;
 ghost_2.lastDir = 0;
 ghost_2.CrossRoad = function () {
     var avList = []
-    if (maze[this.y / 27][(this.x / 27) - 1] != '#') {//left road
+    if (maze[this.PacmanY / 27][(this.x / 27) - 1] != '#') {//left road
         avList.push(0)
     }
 
-    if (maze[this.y / 27][(this.x / 27) + 1] != '#') {//right road
+    if (maze[this.PacmanY / 27][(this.x / 27) + 1] != '#') {//right road
         avList.push(1)
     }
 
-    if (maze[(this.y / 27) - 1][this.x / 27] != '#') {//Up road
+    if (maze[(this.PacmanY / 27) - 1][this.x / 27] != '#') {//Up road
         avList.push(2)
     }
 
-    if (maze[(this.y / 27) + 1][this.x / 27] != '#') {//Down road
+    if (maze[(this.PacmanY / 27) + 1][this.x / 27] != '#') {//Down road
         avList.push(3)
     }
 
-    if ((this.y / 27) == 1) {//first row
+    if ((this.PacmanY / 27) == 1) {//first row
         for (var i = 0; i < avList.length; i++) {
             if (avList[i] === 2) {
                 avList.splice(i, 1);
             }
         }
     }
-    if ((this.y / 27) == 12) {//last row
+    if ((this.PacmanY / 27) == 12) {//last row
         for (var i = 0; i < avList.length; i++) {
             if (avList[i] === 3) {
                 avList.splice(i, 1);
@@ -737,35 +754,35 @@ ghost_2.CrossRoad = function () {
 
 }
 ghost_3.x = parseInt(ghost_3.element.style.left)
-ghost_3.y = parseInt(ghost_3.element.style.top)
+ghost_3.PacmanY = parseInt(ghost_3.element.style.top)
 ghost_3.step = 0;
 ghost_3.lastDir = 0;
 ghost_3.CrossRoad = function () {
     var avList = []
-    if (maze[this.y / 27][(this.x / 27) - 1] != '#') {//left road
+    if (maze[this.PacmanY / 27][(this.x / 27) - 1] != '#') {//left road
         avList.push(0)
     }
 
-    if (maze[this.y / 27][(this.x / 27) + 1] != '#') {//right road
+    if (maze[this.PacmanY / 27][(this.x / 27) + 1] != '#') {//right road
         avList.push(1)
     }
 
-    if (maze[(this.y / 27) - 1][this.x / 27] != '#') {//Up road
+    if (maze[(this.PacmanY / 27) - 1][this.x / 27] != '#') {//Up road
         avList.push(2)
     }
 
-    if (maze[(this.y / 27) + 1][this.x / 27] != '#') {//Down road
+    if (maze[(this.PacmanY / 27) + 1][this.x / 27] != '#') {//Down road
         avList.push(3)
     }
 
-    if ((this.y / 27) == 1) {//first row
+    if ((this.PacmanY / 27) == 1) {//first row
         for (var i = 0; i < avList.length; i++) {
             if (avList[i] === 2) {
                 avList.splice(i, 1);
             }
         }
     }
-    if ((this.y / 27) == 12) {//last row
+    if ((this.PacmanY / 27) == 12) {//last row
         for (var i = 0; i < avList.length; i++) {
             if (avList[i] === 3) {
                 avList.splice(i, 1);
@@ -795,34 +812,34 @@ ghost_3.CrossRoad = function () {
 
 }
 ghost_4.x = parseInt(ghost_4.element.style.left)
-ghost_4.y = parseInt(ghost_4.element.style.top)
+ghost_4.PacmanY = parseInt(ghost_4.element.style.top)
 ghost_4.step = 0;
 ghost_4.lastDir = 0;
 ghost_4.CrossRoad = function () {
     var avList = []
-    if (maze[this.y / 27][(this.x / 27) - 1] != '#') {//left road
+    if (maze[this.PacmanY / 27][(this.x / 27) - 1] != '#') {//left road
         avList.push(0)
     }
 
-    if (maze[this.y / 27][(this.x / 27) + 1] != '#') {//right road
+    if (maze[this.PacmanY / 27][(this.x / 27) + 1] != '#') {//right road
         avList.push(1)
     }
 
-    if (maze[(this.y / 27) - 1][this.x / 27] != '#') {//Up road
+    if (maze[(this.PacmanY / 27) - 1][this.x / 27] != '#') {//Up road
         avList.push(2)
     }
 
-    if (maze[(this.y / 27) + 1][this.x / 27] != '#') {//Down road
+    if (maze[(this.PacmanY / 27) + 1][this.x / 27] != '#') {//Down road
         avList.push(3)
     }
-    if ((this.y / 27) == 1) {//first row
+    if ((this.PacmanY / 27) == 1) {//first row
         for (var i = 0; i < avList.length; i++) {
             if (avList[i] === 2) {
                 avList.splice(i, 1);
             }
         }
     }
-    if ((this.y / 27) == 12) {//last row
+    if ((this.PacmanY / 27) == 12) {//last row
         for (var i = 0; i < avList.length; i++) {
             if (avList[i] === 3) {
                 avList.splice(i, 1);
@@ -854,6 +871,10 @@ ghost_4.CrossRoad = function () {
 var ghostMoves = [
     function moveLeft(self) {
         var stepInterval = setInterval(function () {
+            if ((Math.abs(this.x - PacmanX) < 27) && (Math.abs(this.PacmanY - PacmanY) < 27)) {
+                showStatus('l')
+                window.clearInterval(stepInterval)
+            }
             this.lastDir = 1;
             if (this.step == 26) {
                 this.step = 0;
@@ -869,6 +890,10 @@ var ghostMoves = [
         }.bind(self), timeInterval);
     }, function moveRight(self) {
         var stepInterval = setInterval(function () {
+            if ((Math.abs(this.x - PacmanX) < 27) && (Math.abs(this.PacmanY - PacmanY) < 27)) {
+                showStatus('l')
+                window.clearInterval(stepInterval)
+            }
             this.lastDir = 0;
             if (this.step == 26) {
                 this.x += deltaX;
@@ -883,34 +908,43 @@ var ghostMoves = [
             this.element.style.left = (this.x).toString() + 'px';
         }.bind(self), timeInterval);
     }, function moveUp(self) {
+
         var stepInterval = setInterval(function () {
+            if ((Math.abs(this.x - PacmanX) < 27) && (Math.abs(this.PacmanY - PacmanY) < 27)) {
+                showStatus('l')
+                window.clearInterval(stepInterval)
+            }
             this.lastDir = 3;
             if (this.step == 26) {
                 this.step = 0;
-                this.y -= deltaY;
+                this.PacmanY -= deltaY;
                 window.clearInterval(stepInterval)
                 var dir = this.CrossRoad()
                 ghostMoves[dir](this)
                 return;
             }
             this.step++;
-            this.y -= deltaY;
-            this.element.style.top = (this.y).toString() + 'px';
+            this.PacmanY -= deltaY;
+            this.element.style.top = (this.PacmanY).toString() + 'px';
         }.bind(self), timeInterval);
     }, function moveDown(self) {
         var stepInterval = setInterval(function () {
+            if ((Math.abs(this.x - PacmanX) < 27) && (Math.abs(this.PacmanY - PacmanY) < 27)) {
+                showStatus('l')
+                window.clearInterval(stepInterval)
+            }
             this.lastDir = 2;
             if (this.step == 26) {
                 this.step = 0;
-                this.y += deltaY;
+                this.PacmanY += deltaY;
                 window.clearInterval(stepInterval)
                 var dir = this.CrossRoad()
                 ghostMoves[dir](this)
                 return;
             }
             this.step++;
-            this.y += deltaY;
-            this.element.style.top = (this.y).toString() + 'px';
+            this.PacmanY += deltaY;
+            this.element.style.top = (this.PacmanY).toString() + 'px';
         }.bind(self), timeInterval);
     }]
 
@@ -925,6 +959,7 @@ ghost_4.CrossRoad()
 var step = 0;
 setTimeout(() => {
     var stepInterval = setInterval(function () {
+
         if (step == 53) {
             ghost_4.x += deltaX;
             step = 0;
@@ -992,3 +1027,20 @@ setTimeout(() => {
     }, timeInterval);
 
 }, 16000);
+function showStatus(letter) {
+    var doc = document.getElementById('dialog')
+    switch (letter) {
+        case 'w':
+            doc.setAttribute('style', 'display:block;content:url(resources/winner.jpg);transform: scale(1.3);')
+            break;
+        case 'l':
+            window.clearInterval(myInt)
+            doc.setAttribute('style', 'display:block;content:url(resources/gameover.png);')
+            setTimeout(() => {
+                location.reload();
+            }, 3000);
+            break;
+        default:
+            break;
+    }
+}
