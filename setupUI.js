@@ -1,56 +1,75 @@
-function SetupUi(lev) {
-    var level = MazeSets.StandardLevels[lev];
+function GenerateMaze(updateFlag = false, mazeNo = 0, levelType = "StandardLevels") {
+    var level = MazeSets[levelType][mazeNo].maze;
     var PacmanInd = []
     var GhostInd = []
     var t = 0;
     var left = 0;
-    var Cnt = 0;
+    var gamePoints = 0;
+    var mazeArray = [];
 
-    for (row = 0; row < level.maze.length; row++) {
-        for (let index = 0; index < level.maze[row].length; index++) {
-            var element = level.maze[row][index];
-            var img = document.createElement('img')
+    for (row = 0; row < level.length; row++) {
+        var arr = new Array();
+        for (let index = 0; index < level[row].length; index++) {
+            var element = level[row][index];
             if (element == '.') {
                 element = 'food'
-                Cnt += 1;
+                gamePoints += 1;
+                arr.push('.')
+            }
+            else if (element == 'x') {
+                element = 'x'
+                arr.push('x')
             }
             else if (element == 'P') {
                 element = 'x';
                 PacmanInd = [t, left];
+                arr.push('x')
             }
             else if (element == 'z') {
                 element = 'x'
                 GhostInd.push([t, left])
+                arr.push('#')
             }
-            img.src = 'resources/' + element + '.png';
-            img.id = t.toString() + left.toString();
-            img.setAttribute('style',
-                `height:27px;
+            else {
+                arr.push('#')
+            }
+            var CellImage;
+            if (updateFlag == true) {
+                var Imgid = t.toString() + left.toString();
+                CellImage = document.getElementById(Imgid);
+                CellImage.src = 'resources/' + element + '.png';
+                CellImage.setAttribute('style',
+                    `height:27px;
             width:27px;
             top:${t}px;
             left:${left}px;
             padding:0px;
             position:absolute;
-            
             z-index:1`)
+            } else {
+                CellImage = document.createElement('img')
+                CellImage.src = 'resources/' + element + '.png';
+                CellImage.id = t.toString() + left.toString();
+                CellImage.setAttribute('style',
+                    `height:27px;
+            width:27px;
+            top:${t}px;
+            left:${left}px;
+            padding:0px;
+            position:absolute;
+            z-index:1`)
+                document.getElementById('pacmanMaze').append(CellImage)
+            }
 
-            document.getElementById('pacmanMaze').append(img)
+
             left += 27;
         }
 
+        console.log(mazeArray)
+        mazeArray.push(arr);
         left = 0;
         t += 27;
     }
-    var img = document.createElement('img')
-    img.src = 'resources/' + 'Right/pac1' + '.png'
-    img.id = "pacman"
-    img.setAttribute('style',
-        `height:27px;
-            width:27px;
-            padding:0px;
-            position:absolute;
-            z-index:2`)
-
 
     document.getElementById('ghostOneOverlay').style.top = (GhostInd[0][0]).toString() + 'px';
     document.getElementById('ghostOneOverlay').style.left = (GhostInd[0][1]).toString() + 'px';
@@ -65,86 +84,9 @@ function SetupUi(lev) {
     document.getElementById('ghostFourOverlay').style.left = (GhostInd[3][1]).toString() + 'px';
 
 
-    document.getElementById('pacmanOverlay').style.top = (PacmanInd[0]).toString() + 'px';
-    document.getElementById('pacmanOverlay').style.left = (PacmanInd[1]).toString() + 'px';
-
-    return Cnt;
-
-}
-
-function UpdateUi(lev) {
-    var level = MazeSets.StandardLevels[lev];
-    var PacmanInd = []
-    var t = 0;
-    var left = 0;
-    var Cnt = 0;
-
-    for (row = 0; row < level.maze.length; row++) {
-        for (let index = 0; index < level.maze[row].length; index++) {
-            var element = level.maze[row][index];
-
-            if (element == '.') {
-                element = 'food'
-                Cnt += 1;
-            }
-            else if (element == 'p') {
-                element = 'food';
-                Cnt += 1;
-
-            }
-            else if (element === 'P') {
-                debugger;
-                element = 'x'
-                MazeSets.StandardLevels[lev].maze[row][index] = 'x';
-                PacmanInd = [t, left];
-            }
-
-            var Imgid = t.toString() + left.toString();
-            document.getElementById(Imgid).src = 'resources/' + element + '.png';
-            document.getElementById(Imgid).setAttribute('style',
-                `height:27px;
-            width:27px;
-            top:${t}px;
-            left:${left}px;
-            padding:0px;
-            position:absolute;
-            z-index:1`)
-            left += 27;
-        }
-        left = 0;
-        t += 27;
-    }
     document.getElementById('pacmanOverlay').setAttribute('style', 'background-image: url(resources/Right/pac1.png)');
     document.getElementById('pacmanOverlay').style.top = (PacmanInd[0]).toString() + 'px';
     document.getElementById('pacmanOverlay').style.left = (PacmanInd[1]).toString() + 'px';
-
-    return Cnt;
+    console.log(mazeArray)
+    return [mazeArray, gamePoints];
 }
-function GenMaze(Currentlevel) {
-    var Maze = [];
-
-    for (var row = 0; row < MazeSets.StandardLevels[Currentlevel].maze.length; row++) {
-        var arr = new Array();
-        for (var index = 0; index < MazeSets.StandardLevels[Currentlevel].maze[0].length; index++) {
-            if (MazeSets.StandardLevels[Currentlevel].maze[row][index] === 'p') {
-                arr.push('.');
-
-            }
-            else if (MazeSets.StandardLevels[Currentlevel].maze[row][index] === 'P') {
-                arr.push('x')
-            }
-            else if (MazeSets.StandardLevels[Currentlevel].maze[row][index] === 'x') {
-                arr.push('x')
-            }
-            else if (MazeSets.StandardLevels[Currentlevel].maze[row][index] === '.') {
-                arr.push('.')
-            }
-            else {
-                arr.push('#');
-            }
-        }
-        Maze.push(arr);
-
-    }
-    return Maze;
-};

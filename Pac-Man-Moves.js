@@ -1,9 +1,15 @@
+var maze;
 var Currentlevel = 0;
-var NumofFood = SetupUi(Currentlevel);
+var NumofFood;
 var pacman = document.getElementById('pacmanOverlay');
+var res = GenerateMaze(false, 0);
+maze = res[0]
+NumofFood = res[1]
+debugger
 var CurrentFace;
-var myInt;
-
+var PacmanInterval;
+var ghostsIntervals = []
+var ghostsTimeout = []
 var PacmanX = parseInt(pacman.style.left);
 var PacmanY = parseInt(pacman.style.top);
 var delay = 20;
@@ -13,11 +19,11 @@ var contstate;
 
 var audio = new Audio('resources/waka.mp3');
 
-var maze;
-maze = GenMaze(Currentlevel);
 var Nrow = maze.length;
 var Ncol = maze[0].length;
 var Points = 0;
+document.getElementById('Points').innerHTML = ` ${Points}`;
+
 
 
 function checkbroder(Currentx, Currenty, CurrentFace) {
@@ -124,8 +130,8 @@ function CheckWall(DesireState) {
 
 function SetPixel(DesireState) {
     if ((DesireState == 'MoveUp' || DesireState == 'MoveDown') && CurrentFace == 'MoveLeft') {
-        if (myInt != null) {
-            window.clearInterval(myInt);
+        if (PacmanInterval != null) {
+            window.clearInterval(PacmanInterval);
         }
         if (contstate != null) {
             window.clearInterval(contstate);
@@ -156,8 +162,8 @@ function SetPixel(DesireState) {
     }
 
     else if ((DesireState == 'MoveUp' || DesireState == 'MoveDown') && CurrentFace == 'MoveRight') {
-        if (myInt != null) {
-            window.clearInterval(myInt);
+        if (PacmanInterval != null) {
+            window.clearInterval(PacmanInterval);
         }
         if (contstate != null) {
             window.clearInterval(contstate);
@@ -190,8 +196,8 @@ function SetPixel(DesireState) {
     }
 
     else if ((DesireState == 'MoveRight' || DesireState == 'MoveLeft') && CurrentFace == 'MoveUp') {
-        if (myInt != null) {
-            window.clearInterval(myInt);
+        if (PacmanInterval != null) {
+            window.clearInterval(PacmanInterval);
         }
         if (contstate != null) {
             window.clearInterval(contstate);
@@ -223,8 +229,8 @@ function SetPixel(DesireState) {
 
     }
     else if ((DesireState == 'MoveRight' || DesireState == 'MoveLeft') && CurrentFace == 'MoveDown') {
-        if (myInt != null) {
-            window.clearInterval(myInt);
+        if (PacmanInterval != null) {
+            window.clearInterval(PacmanInterval);
         }
         if (contstate != null) {
             window.clearInterval(contstate);
@@ -258,7 +264,6 @@ function SetPixel(DesireState) {
 }
 
 var MoveLeft = function () {
-
     if (CurrentFace != null) {
         pacman.classList.remove(CurrentFace);
     }
@@ -266,56 +271,34 @@ var MoveLeft = function () {
     pacman.classList.add('MoveLeft');
     CurrentFace = 'MoveLeft';
 
-    if (myInt != null) {
-        window.clearInterval(myInt);
+    if (PacmanInterval != null) {
+        window.clearInterval(PacmanInterval);
     }
-    myInt = setInterval(function () {
+
+    PacmanInterval = setInterval(function () {
 
         var row = PacmanY / 27;
         var col = PacmanX / 27;
-
         if (PacmanY % 27 == 0 && PacmanX % 27 == 0 && maze[row][col] == '.') {
             document.getElementById((PacmanY).toString() + (PacmanX).toString()).src = 'resources/' + 'x' + '.png';
             NumofFood -= 1;
             maze[row][col] = 'x';
-
             document.getElementById('Points').innerHTML = ` ${Points}`;
             Points += 1;
-
             if (audio.duration > 0)
                 audio.play();
             if (NumofFood == 0) {
                 Points = 1
                 document.getElementById('Points').innerHTML = ` ${Points}`;
-                window.clearInterval(myInt);
+                window.clearInterval(PacmanInterval);
                 showStatus('w')
-                setTimeout(function () {
 
-
-                }, 1000);
-                setTimeout(function () {
-
-                    document.getElementById('dialog').setAttribute('style', 'display: none');
-
-                    NumofFood = UpdateUi(Currentlevel + 1);
-                    maze = GenMaze(Currentlevel + 1);
-                    Currentlevel += 1;
-                    PacmanX = parseInt(pacman.style.left);
-                    PacmanY = parseInt(pacman.style.top);
-                    var Nrow = maze.length;
-                    var Ncol = maze[0].length;
-
-                    pacman.classList.remove(CurrentFace);
-                    document.getElementById('pacmanOverlay').style.backgroundImage = 'resources/Right/pac1.png';
-
-
-                }, 2000);
             }
 
         }
 
         if (PacmanX % 27 == 0 && checkbroder(row, col, CurrentFace)) {
-            window.clearInterval(myInt);
+            window.clearInterval(PacmanInterval);
         }
 
         else {
@@ -334,10 +317,10 @@ var MoveRight = function () {
     pacman.classList.add('MoveRight');
     CurrentFace = 'MoveRight';
 
-    if (myInt != null) {
-        window.clearInterval(myInt);
+    if (PacmanInterval != null) {
+        window.clearInterval(PacmanInterval);
     }
-    myInt = setInterval(function () {
+    PacmanInterval = setInterval(function () {
 
         var row = PacmanY / 27;
         var col = PacmanX / 27;
@@ -355,30 +338,8 @@ var MoveRight = function () {
             if (NumofFood == 0) {
                 Points = 1
                 document.getElementById('Points').innerHTML = ` ${Points}`;
-                window.clearInterval(myInt);
+                window.clearInterval(PacmanInterval);
                 showStatus('w')
-
-                setTimeout(function () {
-
-
-                }, 1000);
-                setTimeout(function () {
-
-                    document.getElementById('dialog').setAttribute('style', 'display: none');
-
-                    NumofFood = UpdateUi(Currentlevel + 1);
-                    maze = GenMaze(Currentlevel + 1);
-                    Currentlevel += 1;
-                    PacmanX = parseInt(pacman.style.left);
-                    PacmanY = parseInt(pacman.style.top);
-                    var Nrow = maze.length;
-                    var Ncol = maze[0].length;
-
-                    pacman.classList.remove(CurrentFace);
-                    document.getElementById('pacmanOverlay').style.backgroundImage = 'resources/Right/pac1.png';
-
-
-                }, 2000);
             }
 
         }
@@ -386,7 +347,7 @@ var MoveRight = function () {
         if (PacmanX % 27 == 0) {
 
             if (PacmanY % 27 == 0 && checkbroder(row, col, CurrentFace))
-                window.clearInterval(myInt);
+                window.clearInterval(PacmanInterval);
 
 
 
@@ -417,12 +378,12 @@ var MoveUp = function () {
     pacman.classList.add('MoveUp');
     CurrentFace = 'MoveUp';
 
-    if (myInt != null) {
-        window.clearInterval(myInt);
+    if (PacmanInterval != null) {
+        window.clearInterval(PacmanInterval);
     }
 
 
-    myInt = setInterval(function () {
+    PacmanInterval = setInterval(function () {
 
         var row = PacmanY / 27;
         var col = PacmanX / 27;
@@ -435,34 +396,10 @@ var MoveUp = function () {
                 audio.play();
             maze[row][col] = 'x';
             if (NumofFood == 0) {
-
                 Points = 1
                 document.getElementById('Points').innerHTML = ` ${Points}`;
-                window.clearInterval(myInt);
+                window.clearInterval(PacmanInterval);
                 showStatus('w')
-
-                setTimeout(function () {
-
-
-                }, 1000);
-                setTimeout(function () {
-
-                    document.getElementById('dialog').setAttribute('style', 'display: none');
-
-                    NumofFood = UpdateUi(Currentlevel + 1);
-                    maze = GenMaze(Currentlevel + 1);
-                    Currentlevel += 1;
-                    PacmanX = parseInt(pacman.style.left);
-                    PacmanY = parseInt(pacman.style.top);
-                    var Nrow = maze.length;
-                    var Ncol = maze[0].length;
-
-                    pacman.classList.remove(CurrentFace);
-                    document.getElementById('pacmanOverlay').style.backgroundImage = 'resources/Right/pac1.png';
-
-
-                }, 2000);
-
 
             }
 
@@ -471,7 +408,7 @@ var MoveUp = function () {
         if (PacmanY % 27 == 0) {
 
             if (PacmanX % 27 == 0 && checkbroder(row, Math.ceil(col), CurrentFace))
-                window.clearInterval(myInt);
+                window.clearInterval(PacmanInterval);
 
             else {
                 PacmanY -= 3;
@@ -497,10 +434,10 @@ var MoveDown = function () {
 
     pacman.classList.add('MoveDown');
     CurrentFace = 'MoveDown';
-    if (myInt != null) {
-        window.clearInterval(myInt);
+    if (PacmanInterval != null) {
+        window.clearInterval(PacmanInterval);
     }
-    myInt = setInterval(function () {
+    PacmanInterval = setInterval(function () {
         var row = PacmanY / 27;
         var col = PacmanX / 27;
 
@@ -516,35 +453,15 @@ var MoveDown = function () {
             if (NumofFood == 0) {
                 Points = 1
                 document.getElementById('Points').innerHTML = ` ${Points}`;
-                window.clearInterval(myInt);
+                window.clearInterval(PacmanInterval);
                 showStatus('w')
-                setTimeout(function () {
-                }, 1000);
-                setTimeout(function () {
-
-                    document.getElementById('dialog').setAttribute('style', 'display: none');
-
-                    NumofFood = UpdateUi(Currentlevel + 1);
-                    maze = GenMaze(Currentlevel + 1);
-                    Currentlevel += 1;
-                    PacmanX = parseInt(pacman.style.left);
-                    PacmanY = parseInt(pacman.style.top);
-                    var Nrow = maze.length;
-                    var Ncol = maze[0].length;
-
-                    pacman.classList.remove(CurrentFace);
-                    document.getElementById('pacmanOverlay').style.backgroundImage = 'resources/Right/pac1.png';
-
-
-                }, 2000);
-
 
             }
         }
 
         if (PacmanY % 27 == 0) {
             if (PacmanX % 27 == 0 && checkbroder(row, col, CurrentFace))
-                window.clearInterval(myInt);
+                window.clearInterval(PacmanInterval);
 
             else {
                 PacmanY += 3;
@@ -563,11 +480,6 @@ var MoveDown = function () {
 }
 
 document.addEventListener('keydown', function (e) {
-
-    // if (e.keyCode == 80){//game paused
-    //     window.clearInterval(myInt);
-    // }
-    // else 
 
     if (e.keyCode == 37) // left
     {
@@ -605,46 +517,43 @@ document.addEventListener('keydown', function (e) {
 })
 
 
-
 var ghost_1 = { element: document.getElementById('ghostOneOverlay') }
 var ghost_2 = { element: document.getElementById('ghostTwoOverlay') }
 var ghost_3 = { element: document.getElementById('ghostThreeOverlay') }
 var ghost_4 = { element: document.getElementById('ghostFourOverlay') }
-var CurrentFace = -1;
 var deltaX = 1;
 var deltaY = 1;
 var timeInterval = 10;
 
-ghost_1.x = parseInt(ghost_1.element.style.left)
-ghost_1.PacmanY = parseInt(ghost_1.element.style.top)
-ghost_1.step = 0;
+
+ghost_1.ghostInitialSteps = 0;
 ghost_1.lastDir = 0;
 ghost_1.CrossRoad = function () {
     var avList = []
-    if (maze[this.PacmanY / 27][(this.x / 27) - 1] != '#') {//left road
+    if (maze[this.y / 27][(this.x / 27) - 1] != '#') {//left road
         avList.push(0)
     }
 
-    if (maze[this.PacmanY / 27][(this.x / 27) + 1] != '#') {//right road
+    if (maze[this.y / 27][(this.x / 27) + 1] != '#') {//right road
         avList.push(1)
     }
 
-    if (maze[(this.PacmanY / 27) - 1][this.x / 27] != '#') {//Up road
+    if (maze[(this.y / 27) - 1][this.x / 27] != '#') {//Up road
         avList.push(2)
     }
 
-    if (maze[(this.PacmanY / 27) + 1][this.x / 27] != '#') {//Down road
+    if (maze[(this.y / 27) + 1][this.x / 27] != '#') {//Down road
         avList.push(3)
     }
 
-    if ((this.PacmanY / 27) == 1) {//first row
+    if ((this.y / 27) == 1) {//first row
         for (var i = 0; i < avList.length; i++) {
             if (avList[i] === 2) {
                 avList.splice(i, 1);
             }
         }
     }
-    if ((this.PacmanY / 27) == 12) {//last row
+    if ((this.y / 27) == 12) {//last row
         for (var i = 0; i < avList.length; i++) {
             if (avList[i] === 3) {
                 avList.splice(i, 1);
@@ -673,36 +582,35 @@ ghost_1.CrossRoad = function () {
     return avList[((Math.random() * 10).toFixed() % avList.length)]
 
 }
-ghost_2.x = parseInt(ghost_2.element.style.left)
-ghost_2.PacmanY = parseInt(ghost_2.element.style.top)
-ghost_2.step = 0;
+
+ghost_2.ghostInitialSteps = 0;
 ghost_2.lastDir = 0;
 ghost_2.CrossRoad = function () {
     var avList = []
-    if (maze[this.PacmanY / 27][(this.x / 27) - 1] != '#') {//left road
+    if (maze[this.y / 27][(this.x / 27) - 1] != '#') {//left road
         avList.push(0)
     }
 
-    if (maze[this.PacmanY / 27][(this.x / 27) + 1] != '#') {//right road
+    if (maze[this.y / 27][(this.x / 27) + 1] != '#') {//right road
         avList.push(1)
     }
 
-    if (maze[(this.PacmanY / 27) - 1][this.x / 27] != '#') {//Up road
+    if (maze[(this.y / 27) - 1][this.x / 27] != '#') {//Up road
         avList.push(2)
     }
 
-    if (maze[(this.PacmanY / 27) + 1][this.x / 27] != '#') {//Down road
+    if (maze[(this.y / 27) + 1][this.x / 27] != '#') {//Down road
         avList.push(3)
     }
 
-    if ((this.PacmanY / 27) == 1) {//first row
+    if ((this.y / 27) == 1) {//first row
         for (var i = 0; i < avList.length; i++) {
             if (avList[i] === 2) {
                 avList.splice(i, 1);
             }
         }
     }
-    if ((this.PacmanY / 27) == 12) {//last row
+    if ((this.y / 27) == 12) {//last row
         for (var i = 0; i < avList.length; i++) {
             if (avList[i] === 3) {
                 avList.splice(i, 1);
@@ -731,36 +639,35 @@ ghost_2.CrossRoad = function () {
     return avList[((Math.random() * 10).toFixed() % avList.length)]
 
 }
-ghost_3.x = parseInt(ghost_3.element.style.left)
-ghost_3.PacmanY = parseInt(ghost_3.element.style.top)
-ghost_3.step = 0;
+
+ghost_3.ghostInitialSteps = 0;
 ghost_3.lastDir = 0;
 ghost_3.CrossRoad = function () {
     var avList = []
-    if (maze[this.PacmanY / 27][(this.x / 27) - 1] != '#') {//left road
+    if (maze[this.y / 27][(this.x / 27) - 1] != '#') {//left road
         avList.push(0)
     }
 
-    if (maze[this.PacmanY / 27][(this.x / 27) + 1] != '#') {//right road
+    if (maze[this.y / 27][(this.x / 27) + 1] != '#') {//right road
         avList.push(1)
     }
 
-    if (maze[(this.PacmanY / 27) - 1][this.x / 27] != '#') {//Up road
+    if (maze[(this.y / 27) - 1][this.x / 27] != '#') {//Up road
         avList.push(2)
     }
 
-    if (maze[(this.PacmanY / 27) + 1][this.x / 27] != '#') {//Down road
+    if (maze[(this.y / 27) + 1][this.x / 27] != '#') {//Down road
         avList.push(3)
     }
 
-    if ((this.PacmanY / 27) == 1) {//first row
+    if ((this.y / 27) == 1) {//first row
         for (var i = 0; i < avList.length; i++) {
             if (avList[i] === 2) {
                 avList.splice(i, 1);
             }
         }
     }
-    if ((this.PacmanY / 27) == 12) {//last row
+    if ((this.y / 27) == 12) {//last row
         for (var i = 0; i < avList.length; i++) {
             if (avList[i] === 3) {
                 avList.splice(i, 1);
@@ -789,35 +696,35 @@ ghost_3.CrossRoad = function () {
     return avList[((Math.random() * 10).toFixed() % avList.length)]
 
 }
-ghost_4.x = parseInt(ghost_4.element.style.left)
-ghost_4.PacmanY = parseInt(ghost_4.element.style.top)
-ghost_4.step = 0;
+
+ghost_4.ghostInitialSteps = 0;
 ghost_4.lastDir = 0;
 ghost_4.CrossRoad = function () {
+    console.log(maze[this.y / 27][(this.x / 27) - 1])
     var avList = []
-    if (maze[this.PacmanY / 27][(this.x / 27) - 1] != '#') {//left road
+    if (maze[this.y / 27][(this.x / 27) - 1] != '#') {//left road
         avList.push(0)
     }
 
-    if (maze[this.PacmanY / 27][(this.x / 27) + 1] != '#') {//right road
+    if (maze[this.y / 27][(this.x / 27) + 1] != '#') {//right road
         avList.push(1)
     }
 
-    if (maze[(this.PacmanY / 27) - 1][this.x / 27] != '#') {//Up road
+    if (maze[(this.y / 27) - 1][this.x / 27] != '#') {//Up road
         avList.push(2)
     }
 
-    if (maze[(this.PacmanY / 27) + 1][this.x / 27] != '#') {//Down road
+    if (maze[(this.y / 27) + 1][this.x / 27] != '#') {//Down road
         avList.push(3)
     }
-    if ((this.PacmanY / 27) == 1) {//first row
+    if ((this.y / 27) == 1) {//first row
         for (var i = 0; i < avList.length; i++) {
             if (avList[i] === 2) {
                 avList.splice(i, 1);
             }
         }
     }
-    if ((this.PacmanY / 27) == 12) {//last row
+    if ((this.y / 27) == 12) {//last row
         for (var i = 0; i < avList.length; i++) {
             if (avList[i] === 3) {
                 avList.splice(i, 1);
@@ -849,176 +756,246 @@ ghost_4.CrossRoad = function () {
 var ghostMoves = [
     function moveLeft(self) {
         var stepInterval = setInterval(function () {
-            if ((Math.abs(this.x - PacmanX) < 27) && (Math.abs(this.PacmanY - PacmanY) < 27)) {
+            if ((Math.abs(this.x - PacmanX) < 27) && (Math.abs(this.y - PacmanY) < 27)) {
                 showStatus('l')
                 window.clearInterval(stepInterval)
             }
+            else{
             this.lastDir = 1;
-            if (this.step == 26) {
-                this.step = 0;
+            if (this.ghostInitialSteps == 26) {
+                this.ghostInitialSteps = 0;
                 this.x -= deltaX;
                 window.clearInterval(stepInterval)
                 var dir = this.CrossRoad()
                 ghostMoves[dir](this)
                 return;
             }
-            this.step++;
+            this.ghostInitialSteps++;
             this.x -= deltaX;
             this.element.style.left = (this.x).toString() + 'px';
+        }
         }.bind(self), timeInterval);
+        ghostsIntervals.push(stepInterval)
+    
     }, function moveRight(self) {
         var stepInterval = setInterval(function () {
-            if ((Math.abs(this.x - PacmanX) < 27) && (Math.abs(this.PacmanY - PacmanY) < 27)) {
+            if ((Math.abs(this.x - PacmanX) < 27) && (Math.abs(this.y - PacmanY) < 27)) {
                 showStatus('l')
                 window.clearInterval(stepInterval)
             }
+            else{
             this.lastDir = 0;
-            if (this.step == 26) {
+            if (this.ghostInitialSteps == 26) {
                 this.x += deltaX;
-                this.step = 0;
+                this.ghostInitialSteps = 0;
                 window.clearInterval(stepInterval)
                 var dir = this.CrossRoad()
                 ghostMoves[dir](this)
                 return;
             }
-            this.step++;
+            this.ghostInitialSteps++;
             this.x += deltaX;
             this.element.style.left = (this.x).toString() + 'px';
+        }
         }.bind(self), timeInterval);
+        ghostsIntervals.push(stepInterval)
+
     }, function moveUp(self) {
 
         var stepInterval = setInterval(function () {
-            if ((Math.abs(this.x - PacmanX) < 27) && (Math.abs(this.PacmanY - PacmanY) < 27)) {
+            if ((Math.abs(this.x - PacmanX) < 27) && (Math.abs(this.y - PacmanY) < 27)) {
                 showStatus('l')
                 window.clearInterval(stepInterval)
             }
+            else{
             this.lastDir = 3;
-            if (this.step == 26) {
-                this.step = 0;
-                this.PacmanY -= deltaY;
+            if (this.ghostInitialSteps == 26) {
+                this.ghostInitialSteps = 0;
+                this.y -= deltaY;
                 window.clearInterval(stepInterval)
                 var dir = this.CrossRoad()
                 ghostMoves[dir](this)
                 return;
             }
-            this.step++;
-            this.PacmanY -= deltaY;
-            this.element.style.top = (this.PacmanY).toString() + 'px';
+            this.ghostInitialSteps++;
+            this.y -= deltaY;
+            this.element.style.top = (this.y).toString() + 'px';
+        }
         }.bind(self), timeInterval);
+        ghostsIntervals.push(stepInterval)
+
     }, function moveDown(self) {
         var stepInterval = setInterval(function () {
-            if ((Math.abs(this.x - PacmanX) < 27) && (Math.abs(this.PacmanY - PacmanY) < 27)) {
+            if ((Math.abs(this.x - PacmanX) < 27) && (Math.abs(this.y - PacmanY) < 27)) {
                 showStatus('l')
                 window.clearInterval(stepInterval)
             }
+            else
+            {
             this.lastDir = 2;
-            if (this.step == 26) {
-                this.step = 0;
-                this.PacmanY += deltaY;
+            if (this.ghostInitialSteps == 26) {
+                this.ghostInitialSteps = 0;
+                this.y += deltaY;
                 window.clearInterval(stepInterval)
                 var dir = this.CrossRoad()
                 ghostMoves[dir](this)
                 return;
             }
-            this.step++;
-            this.PacmanY += deltaY;
-            this.element.style.top = (this.PacmanY).toString() + 'px';
+            this.ghostInitialSteps++;
+            this.y += deltaY;
+            this.element.style.top = (this.y).toString() + 'px';
+        }
         }.bind(self), timeInterval);
+        ghostsIntervals.push(stepInterval)
     }]
-
-
-
 ghost_1.Move = ghostMoves
 ghost_2.Move = ghostMoves
 ghost_3.Move = ghostMoves
 ghost_4.Move = ghostMoves
 
-ghost_4.CrossRoad()
-var step = 0;
-setTimeout(() => {
-    var stepInterval = setInterval(function () {
+function ghostsMakeTheirFirstSteps() {
 
-        if (step == 53) {
+    ghostsIntervals.forEach(element => {
+        window.clearInterval(element);
+    });
+
+    ghostsTimeout.forEach(element => {
+        window.clearTimeout(element);
+    });
+
+    ghost_1.x = parseInt(ghost_1.element.style.left)
+    ghost_1.y = parseInt(ghost_1.element.style.top)
+    ghost_1.ghostInitialSteps = 0;
+    ghost_1.lastDir = 0;
+
+    ghost_2.x = parseInt(ghost_2.element.style.left)
+    ghost_2.y = parseInt(ghost_2.element.style.top)
+    ghost_2.ghostInitialSteps = 0;
+    ghost_2.lastDir = 0;
+
+    ghost_3.x = parseInt(ghost_3.element.style.left)
+    ghost_3.y = parseInt(ghost_3.element.style.top)
+    ghost_3.ghostInitialSteps = 0;
+    ghost_3.lastDir = 0;
+
+    ghost_4.x = parseInt(ghost_4.element.style.left)
+    ghost_4.y = parseInt(ghost_4.element.style.top)
+    ghost_4.ghostInitialSteps = 0;
+    ghost_4.lastDir = 0;
+
+    var ghostInitialSteps = 0;
+    //debugger;
+    var ghostOneTimeout = setTimeout(() => {
+        var stepInterval = setInterval(function () {
+
+            if (ghostInitialSteps == 53) {
+                ghost_4.x += deltaX;
+                ghostInitialSteps = 0;
+                window.clearInterval(stepInterval)
+                var dir = ghost_4.CrossRoad()
+                ghost_4.Move[dir](ghost_4)
+                return;
+            }
+            ghostInitialSteps++;
             ghost_4.x += deltaX;
-            step = 0;
-            window.clearInterval(stepInterval)
-            var dir = ghost_4.CrossRoad()
-            ghost_4.Move[dir](ghost_4)
-            return;
-        }
-        step++;
-        ghost_4.x += deltaX;
-        ghost_4.element.style.left = (ghost_4.x).toString() + 'px';
-    }, timeInterval);
-
-}, 1000);
-
-step = 0;
-setTimeout(() => {
-    var stepInterval = setInterval(function () {
-        if (step == 80) {
+            ghost_4.element.style.left = (ghost_4.x).toString() + 'px';
+        }, timeInterval);
+        ghostsIntervals.push(stepInterval)
+    }, 2000);
+    ghostsTimeout.push(ghostOneTimeout)
+    ghostInitialSteps = 0;
+    var ghostTwoTimeout = setTimeout(() => {
+        var stepInterval = setInterval(function () {
+            if (ghostInitialSteps == 80) {
+                ghost_3.x += deltaX;
+                ghostInitialSteps = 0;
+                window.clearInterval(stepInterval)
+                var dir = ghost_3.CrossRoad()
+                ghost_3.Move[dir](ghost_3)
+                return;
+            }
+            ghostInitialSteps++;
             ghost_3.x += deltaX;
-            step = 0;
-            window.clearInterval(stepInterval)
-            var dir = ghost_3.CrossRoad()
-            ghost_3.Move[dir](ghost_3)
-            return;
-        }
-        step++;
-        ghost_3.x += deltaX;
-        ghost_3.element.style.left = (ghost_3.x).toString() + 'px';
-    }, timeInterval);
+            ghost_3.element.style.left = (ghost_3.x).toString() + 'px';
+        }, timeInterval);
+        ghostsIntervals.push(stepInterval)
 
-}, 4000);
+    }, 4000);
+    ghostsTimeout.push(ghostTwoTimeout)
 
-step = 0;
-setTimeout(() => {
-    var stepInterval = setInterval(function () {
-        if (step == 53) {
+    ghostInitialSteps = 0;
+    var ghostThreeTimeout = setTimeout(() => {
+        var stepInterval = setInterval(function () {
+            if (ghostInitialSteps == 53) {
+                ghost_2.x += deltaX;
+                ghostInitialSteps = 0;
+                window.clearInterval(stepInterval)
+                var dir = ghost_2.CrossRoad()
+                ghost_2.Move[dir](ghost_2)
+                return;
+            }
+            ghostInitialSteps++;
             ghost_2.x += deltaX;
-            step = 0;
-            window.clearInterval(stepInterval)
-            var dir = ghost_2.CrossRoad()
-            ghost_2.Move[dir](ghost_2)
-            return;
-        }
-        step++;
-        ghost_2.x += deltaX;
-        ghost_2.element.style.left = (ghost_2.x).toString() + 'px';
-    }, timeInterval);
+            ghost_2.element.style.left = (ghost_2.x).toString() + 'px';
+        }, timeInterval);
+        ghostsIntervals.push(stepInterval)
 
-}, 8000);
-step = 0;
-setTimeout(() => {
-    var stepInterval = setInterval(function () {
-        if (step == 80) {
+    }, 8000);
+    ghostsTimeout.push(ghostThreeTimeout)
+
+    ghostInitialSteps = 0;
+    var ghostFourTimeout = setTimeout(() => {
+        var stepInterval = setInterval(function () {
+            if (ghostInitialSteps == 80) {
+                ghost_1.x += deltaX;
+                ghostInitialSteps = 0;
+                window.clearInterval(stepInterval)
+                var dir = ghost_1.CrossRoad()
+                ghost_1.Move[dir](ghost_1)
+                return;
+            }
+            ghostInitialSteps++;
             ghost_1.x += deltaX;
-            step = 0;
-            window.clearInterval(stepInterval)
-            var dir = ghost_1.CrossRoad()
-            ghost_1.Move[dir](ghost_1)
-            return;
-        }
-        step++;
-        ghost_1.x += deltaX;
-        ghost_1.element.style.left = (ghost_1.x).toString() + 'px';
-    }, timeInterval);
+            ghost_1.element.style.left = (ghost_1.x).toString() + 'px';
+        }, timeInterval);
+        ghostsIntervals.push(stepInterval)
 
-}, 16000);
+    }, 16000);
+    ghostsTimeout.push(ghostFourTimeout)
+
+}
 function showStatus(letter) {
     var doc = document.getElementById('dialog')
     switch (letter) {
         case 'w':
             doc.setAttribute('style', 'display:block;content:url(resources/winner.jpg);transform: scale(1.3);')
+            setTimeout(() => {
+                maze = []
+                var res = GenerateMaze(true, Currentlevel + 1)
+                maze = res[0]
+                NumofFood = res[1]
+                console.log(maze)
+                console.log(NumofFood)
+                Currentlevel += 1;
+                PacmanX = parseInt(pacman.style.left);
+                PacmanY = parseInt(pacman.style.top);
+                Nrow = maze.length;
+                Ncol = maze[0].length;
+                pacman.classList.remove(CurrentFace);
+                document.getElementById('pacmanOverlay').style.backgroundImage = 'resources/Right/pac1.png';
+                doc.setAttribute('style', 'display: none');
+                ghostsMakeTheirFirstSteps()
+            },2000);
             break;
         case 'l':
-            window.clearInterval(myInt)
+            window.clearInterval(PacmanInterval)
             doc.setAttribute('style', 'display:block;content:url(resources/gameover.png);')
             setTimeout(() => {
                 location.reload();
-            }, 3000);
+            }, 1500);
             break;
         default:
             break;
     }
 }
+ghostsMakeTheirFirstSteps()
